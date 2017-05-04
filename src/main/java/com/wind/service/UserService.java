@@ -33,6 +33,12 @@ public class UserService implements UserDetailsService {
         return Optional.ofNullable(userMapper.selectByPrimaryKey(id));
     }
 
+    public Optional<User> getUserByName(String name) {
+        User user = new User();
+        user.setName(name);
+        return Optional.ofNullable(userMapper.selectOne(user));
+    }
+
     public List<User> getAll(int page) {
         PageHelper.startPage(page, Constant.PAGE_SIZE);
         return userMapper.selectAll();

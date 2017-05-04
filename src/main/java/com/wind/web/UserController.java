@@ -2,11 +2,15 @@ package com.wind.web;
 
 import com.wind.common.Constant;
 import com.wind.common.PaginatedResult;
+import com.wind.common.SecurityUser;
 import com.wind.exception.ResourceNotFoundException;
 import com.wind.mybatis.pojo.User;
 import com.wind.service.UserService;
 import io.swagger.annotations.*;
+import lombok.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -22,7 +27,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(value="获取用户详情")
+    @ApiOperation(value = "获取用户详情")
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         return userService
@@ -33,7 +38,7 @@ public class UserController {
                         .setId(id));
     }
 
-    @ApiOperation(value="获取用户列表")
+    @ApiOperation(value = "获取用户列表")
     @GetMapping("/all/{page}")
     public ResponseEntity<?> getAllUser(@PathVariable int page) {
         return ResponseEntity
@@ -43,7 +48,7 @@ public class UserController {
                         .setTotalPage(userService.getTotalPage()));
     }
 
-    @ApiOperation(value="新增用户")
+    @ApiOperation(value = "新增用户")
     @PostMapping
     public ResponseEntity<?> postUser(@RequestBody User user) {
         userService.addUser(user);
@@ -59,7 +64,7 @@ public class UserController {
                 .body(user);
     }
 
-    @ApiOperation(value="修改用户")
+    @ApiOperation(value = "修改用户")
     @PutMapping("/{id}")
     public ResponseEntity<?> putUser(@PathVariable Long id, @RequestBody User user) {
         assertUserExist(id);
@@ -72,7 +77,26 @@ public class UserController {
                 .body(user);
     }
 
-    @ApiOperation(value="删除用户")
+    @ApiOperation(value = "修改密码")
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@RequestBody changePasswordForm form) {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> user = userService.getUserByName(((SecurityUser) auth.getPrincipal()).getUsername());
+        if (user.isPresent() && user.get().getPassword().equals(form.oldPassword)) {
+            User instance = user.get();
+            instance.setPassword(form.newPassword);
+            userService.modifyUserById(instance);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .build();
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @ApiOperation(value = "删除用户")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         assertUserExist(id);
@@ -90,5 +114,11 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException()
                         .setResourceName(Constant.RESOURCE_USER)
                         .setId(id));
+    }
+
+    @Data
+    static class changePasswordForm {
+        private String oldPassword;
+        private String newPassword;
     }
 }
