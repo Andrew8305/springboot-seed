@@ -24,9 +24,9 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = new User();
-        user.setName(userName);
+        user.setAccount(userName);
         user = userMapper.selectOne(user);
-        return new SecurityUser(user, true, true, true, true, null);
+        return new SecurityUser(user);
     }
 
     public Optional<User> getUserByID(Long id) {
@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> getUserByName(String name) {
         User user = new User();
-        user.setName(name);
+        user.setAccount(name);
         return Optional.ofNullable(userMapper.selectOne(user));
     }
 

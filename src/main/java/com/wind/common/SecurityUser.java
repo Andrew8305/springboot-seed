@@ -21,25 +21,20 @@ public class SecurityUser extends User implements UserDetails {
     private final boolean accountNonLocked;
     private final Set<GrantedAuthority> authorities;
 
-    public SecurityUser(User user, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public SecurityUser(User user) {
         if (user != null) {
-            username = user.getName();
-            setPassword(user.getPassword());
-            setEmail(user.getEmail());
-            setExpiredate(user.getExpiredate());
             setId(user.getId());
-            setLastlogindate(user.getLastlogindate());
-            setLastloginip(user.getLastloginip());
-            setPhone(user.getPhone());
-            setRegisterdate(user.getRegisterdate());
-            setRole(user.getRole());
+            username = user.getAccount();
             setPassword(user.getPassword());
-            this.enabled = enabled;
-            this.accountNonExpired = accountNonExpired;
-            this.credentialsNonExpired = credentialsNonExpired;
-            this.accountNonLocked = accountNonLocked;
-            this.authorities = new HashSet<>(CollectionUtils.emptyIfNull(authorities));
-            this.authorities.add(new SimpleGrantedAuthority(user.getRole()));
+            setRegisterdate(user.getRegisterdate());
+            setAuthority(user.getAuthority());
+            setEnabled(user.getEnabled());
+            this.enabled = user.getEnabled();
+            this.accountNonExpired = user.getEnabled();
+            this.credentialsNonExpired = user.getEnabled();
+            this.accountNonLocked = user.getEnabled();
+            this.authorities = new HashSet<>();
+            this.authorities.add(new SimpleGrantedAuthority(user.getAuthority()));
 
         } else {
             throw new IllegalArgumentException("Cannot pass null or empty values to constructor");

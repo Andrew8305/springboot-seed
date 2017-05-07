@@ -5,30 +5,18 @@ import javax.persistence.*;
 
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String account;
 
     private String password;
 
     @Column(name = "registerDate")
     private Date registerdate;
 
-    @Column(name = "lastLoginDate")
-    private Date lastlogindate;
+    private Boolean enabled;
 
-    @Column(name = "expireDate")
-    private Date expiredate;
-
-    private String role;
-
-    private String email;
-
-    private String phone;
-
-    @Column(name = "lastLoginIP")
-    private String lastloginip;
+    private String authority;
 
     /**
      * @return id
@@ -45,17 +33,17 @@ public class User {
     }
 
     /**
-     * @return name
+     * @return account
      */
-    public String getName() {
-        return name;
+    public String getAccount() {
+        return account;
     }
 
     /**
-     * @param name
+     * @param account
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setAccount(String account) {
+        this.account = account;
     }
 
     /**
@@ -87,86 +75,30 @@ public class User {
     }
 
     /**
-     * @return lastLoginDate
+     * @return enabled
      */
-    public Date getLastlogindate() {
-        return lastlogindate;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
     /**
-     * @param lastlogindate
+     * @param enabled
      */
-    public void setLastlogindate(Date lastlogindate) {
-        this.lastlogindate = lastlogindate;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
-     * @return expireDate
+     * @return authority
      */
-    public Date getExpiredate() {
-        return expiredate;
+    public String getAuthority() {
+        return authority;
     }
 
     /**
-     * @param expiredate
+     * @param authority
      */
-    public void setExpiredate(Date expiredate) {
-        this.expiredate = expiredate;
-    }
-
-    /**
-     * @return role
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * @param role
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    /**
-     * @return email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return phone
-     */
-    public String getPhone() {
-        return phone;
-    }
-
-    /**
-     * @param phone
-     */
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    /**
-     * @return lastLoginIP
-     */
-    public String getLastloginip() {
-        return lastloginip;
-    }
-
-    /**
-     * @param lastloginip
-     */
-    public void setLastloginip(String lastloginip) {
-        this.lastloginip = lastloginip;
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 }
