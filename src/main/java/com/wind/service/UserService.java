@@ -44,9 +44,9 @@ public class UserService implements UserDetailsService {
         return userMapper.selectAll();
     }
 
-    public int getTotalPage() {
+    public int getCount() {
         int count = userMapper.selectCount(new User());
-        count = (count % Constant.PAGE_SIZE == 0) ? (count / Constant.PAGE_SIZE) : (count / Constant.PAGE_SIZE + 1);
+        // count = (count % Constant.PAGE_SIZE == 0) ? (count / Constant.PAGE_SIZE) : (count / Constant.PAGE_SIZE + 1);
         return count;
     }
 

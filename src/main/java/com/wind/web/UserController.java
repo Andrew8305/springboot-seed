@@ -45,7 +45,7 @@ public class UserController {
                 .ok(new PaginatedResult()
                         .setData(userService.getAll(page))
                         .setCurrentPage(page)
-                        .setTotalPage(userService.getTotalPage()));
+                        .setCount(userService.getCount()));
     }
 
     @ApiOperation(value = "新增用户")
