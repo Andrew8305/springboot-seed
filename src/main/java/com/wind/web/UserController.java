@@ -65,15 +65,14 @@ public class UserController {
     }
 
     @ApiOperation(value = "修改用户")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> putUser(@PathVariable Long id, @RequestBody User user) {
-        assertUserExist(id);
+    @PutMapping
+    public ResponseEntity<?> putUser(@RequestBody User user) {
+        assertUserExist(user.getId());
 
-        user.setId(id);
         userService.modifyUserById(user);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.ACCEPTED)
                 .body(user);
     }
 
