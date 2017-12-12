@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public boolean addUser(User user) {
-        return userMapper.insert(user) > 0;
+        return userMapper.insertUseGeneratedKeys(user) > 0;
     }
 
     @Transactional
