@@ -100,11 +100,17 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         assertUserExist(id);
 
-        userService.deleteUserById(id);
+        boolean result = userService.deleteUserById(id);
 
-        return ResponseEntity
-                .noContent()
+        if (result)
+            return ResponseEntity
+                .accepted()
                 .build();
+        else
+            return ResponseEntity
+                    .notFound()
+                    .build();
+
     }
 
     private void assertUserExist(Long id) {
