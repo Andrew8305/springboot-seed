@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.Console;
 import java.net.URI;
 import java.util.Optional;
 
@@ -40,12 +41,24 @@ public class UserController {
 
     @ApiOperation(value = "获取用户列表")
     @GetMapping("/all/{page}")
-    public ResponseEntity<?> getAllUser(@PathVariable int page) {
-        return ResponseEntity
-                .ok(new PaginatedResult()
-                        .setData(userService.getAll(page))
-                        .setCurrentPage(page)
-                        .setCount(userService.getCount()));
+    public ResponseEntity<?> search(
+            @RequestParam(value = "type", required = false, defaultValue = "") String type,
+            @RequestParam(value = "value", required = false, defaultValue = "") String value,
+            @PathVariable int page) {
+        if ("".equals(type)) {
+            return ResponseEntity
+                    .ok(new PaginatedResult()
+                            .setData(userService.getAll(page))
+                            .setCurrentPage(page)
+                            .setCount(userService.getCount()));
+        } else {
+            assert ("account".equals(type));
+            return ResponseEntity
+                    .ok(new PaginatedResult()
+                            .setData(userService.getAll(type, value, page))
+                            .setCurrentPage(page)
+                            .setCount(userService.getCount(type, value)));
+        }
     }
 
     @ApiOperation(value = "新增用户")
@@ -104,8 +117,8 @@ public class UserController {
 
         if (result)
             return ResponseEntity
-                .accepted()
-                .build();
+                    .accepted()
+                    .build();
         else
             return ResponseEntity
                     .notFound()

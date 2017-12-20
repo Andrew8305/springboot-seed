@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,9 +45,24 @@ public class UserService implements UserDetailsService {
         return userMapper.selectAll();
     }
 
+    public List<User> getAll(String type, String value, int page) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andLike(type, "%" + value + "%");
+        PageHelper.startPage(page, Constant.PAGE_SIZE);
+        return userMapper.selectByExample(example);
+    }
+
     public int getCount() {
         int count = userMapper.selectCount(new User());
-        // count = (count % Constant.PAGE_SIZE == 0) ? (count / Constant.PAGE_SIZE) : (count / Constant.PAGE_SIZE + 1);
+        return count;
+    }
+
+    public int getCount(String type, String value) {
+        Example example = new Example(User.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andLike(type, "%" + value + "%");
+        int count = userMapper.selectCountByExample(example);
         return count;
     }
 
