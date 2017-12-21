@@ -64,17 +64,19 @@ public class UserController {
     @ApiOperation(value = "新增用户")
     @PostMapping
     public ResponseEntity<?> postUser(@RequestBody User user) {
-        userService.addUser(user);
+        Optional<User> result = userService.getUserByName(user.getAccount());
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(user.getId())
-                .toUri();
-
-        return ResponseEntity
-                .created(location)
-                .body(user);
+        if (!result.isPresent()) {
+            userService.addUser(user);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(user.getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(user);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
     }
 
     @ApiOperation(value = "修改用户")
@@ -84,9 +86,7 @@ public class UserController {
 
         userService.modifyUserById(user);
 
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(user);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
     }
 
     @ApiOperation(value = "修改密码")
@@ -98,13 +98,9 @@ public class UserController {
             User instance = user.get();
             instance.setPassword(form.newPassword);
             userService.modifyUserById(instance);
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .build();
+            return ResponseEntity.status(HttpStatus.OK).build();
         } else {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -116,13 +112,9 @@ public class UserController {
         boolean result = userService.deleteUserById(id);
 
         if (result)
-            return ResponseEntity
-                    .accepted()
-                    .build();
+            return ResponseEntity.accepted().build();
         else
-            return ResponseEntity
-                    .notFound()
-                    .build();
+            return ResponseEntity.notFound().build();
 
     }
 
