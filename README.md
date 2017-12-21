@@ -25,7 +25,7 @@
 > see `http://localhost:8080/swagger-ui.html `
 
 #### oauth2
->use `curl http://localhost:8080/oauth/token -X POST -u client:security -d "grant_type=password&username=admin&password=admin"` to get access token, for example : `69aaaeb8-49c2-410d-8253-ad6c003c6091`
+>use `curl http://localhost:8080/oauth/token -X POST -u client:security -d "grant_type=password&username=admin&password=adminadmin"` to get access token, for example : `69aaaeb8-49c2-410d-8253-ad6c003c6091`
 
 >then we can use `curl -X PUT -H "Authorization: Bearer 69aaaeb8-49c2-410d-8253-ad6c003c6091" --header "Content-Type: application/json" -d "{  \"newPassword\": \"new\",  \"oldPassword\": \"admin\"}" "http://localhost:8080/user/password"` to modify password
 
@@ -34,3 +34,8 @@
 #### remote service
 
 > `https://github.com/ustcwudi/SpringBoot-Seed-Service`
+
+#### remote service & client
+
+> `https://github.com/ustcwudi/springboot-service`
+> `https://github.com/ustcwudi/vue-seed`
