@@ -1,6 +1,7 @@
 package com.wind.web;
 
 import com.wind.common.Constant;
+import com.wind.common.MD5;
 import com.wind.common.PaginatedResult;
 import com.wind.common.SecurityUser;
 import com.wind.exception.ResourceNotFoundException;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.Console;
 import java.net.URI;
+import java.security.MessageDigest;
 import java.util.Optional;
 
 @RestController
@@ -52,7 +54,7 @@ public class UserController {
                             .setCurrentPage(page)
                             .setCount(userService.getCount()));
         } else {
-            assert ("account".equals(type));
+            assert ("username".equals(type));
             return ResponseEntity
                     .ok(new PaginatedResult()
                             .setData(userService.getAll(type, value, page))
@@ -64,7 +66,7 @@ public class UserController {
     @ApiOperation(value = "新增用户")
     @PostMapping
     public ResponseEntity<?> postUser(@RequestBody User user) {
-        Optional<User> result = userService.getUserByName(user.getAccount());
+        Optional<User> result = userService.getUserByName(user.getUsername());
 
         if (!result.isPresent()) {
             userService.addUser(user);
@@ -94,7 +96,7 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody changePasswordForm form) {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userService.getUserByName(((SecurityUser) auth.getPrincipal()).getUsername());
-        if (user.isPresent() && user.get().getPassword().equals(form.oldPassword)) {
+        if (user.isPresent() && user.get().getPassword().equals(MD5.getMD5(user.get().getUsername() + form.oldPassword))) {
             User instance = user.get();
             instance.setPassword(form.newPassword);
             userService.modifyUserById(instance);

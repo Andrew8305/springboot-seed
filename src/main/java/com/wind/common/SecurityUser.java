@@ -2,7 +2,6 @@ package com.wind.common;
 
 import com.wind.mybatis.pojo.User;
 import lombok.*;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,7 @@ public class SecurityUser extends User implements UserDetails {
     public SecurityUser(User user) {
         if (user != null) {
             setId(user.getId());
-            username = user.getAccount();
+            username = user.getUsername();
             setPassword(user.getPassword());
             setRegisterdate(user.getRegisterdate());
             setAuthority(user.getAuthority());

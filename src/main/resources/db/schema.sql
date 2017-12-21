@@ -3,7 +3,7 @@
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `seed`.`user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `account` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
   `registerDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `enabled` tinyint(1) NOT NULL DEFAULT 1,

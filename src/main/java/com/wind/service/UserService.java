@@ -2,6 +2,7 @@ package com.wind.service;
 
 import com.github.pagehelper.PageHelper;
 import com.wind.common.Constant;
+import com.wind.common.MD5;
 import com.wind.mybatis.mapper.UserMapper;
 import com.wind.mybatis.pojo.User;
 import com.wind.common.SecurityUser;
@@ -25,7 +26,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = new User();
-        user.setAccount(userName);
+        user.setUsername(userName);
         user = userMapper.selectOne(user);
         return new SecurityUser(user);
     }
@@ -36,7 +37,7 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> getUserByName(String name) {
         User user = new User();
-        user.setAccount(name);
+        user.setUsername(name);
         return Optional.ofNullable(userMapper.selectOne(user));
     }
 
@@ -68,11 +69,19 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public boolean addUser(User user) {
+        String md5 = MD5.getMD5(user.getPassword());
+        user.setPassword(md5);
         return userMapper.insertUseGeneratedKeys(user) > 0;
     }
 
     @Transactional
     public boolean modifyUserById(User user) {
+        User original = userMapper.selectByPrimaryKey(user);
+        if (!user.getPassword().equals(original.getPassword()))
+        {
+            String md5 = MD5.getMD5(user.getPassword());
+            user.setPassword(md5);
+        }
         return userMapper.updateByPrimaryKey(user) > 0;
     }
 
