@@ -41,6 +41,13 @@ public class UserController {
                         .setId(id));
     }
 
+    @ApiOperation(value = "获取个人详情")
+    @GetMapping("/info")
+    public ResponseEntity<?> getMyInfo() {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.status(HttpStatus.OK).body(auth.getUserAuthentication());
+    }
+
     @ApiOperation(value = "获取用户列表")
     @GetMapping("/all/{page}")
     public ResponseEntity<?> search(
