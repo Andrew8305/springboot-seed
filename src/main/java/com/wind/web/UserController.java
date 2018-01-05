@@ -18,9 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.Console;
 import java.net.URI;
-import java.security.MessageDigest;
 import java.util.Optional;
 
 @RestController
@@ -29,6 +27,7 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
 
     @ApiOperation(value = "获取用户详情")
     @GetMapping("/{id}")
@@ -41,12 +40,6 @@ public class UserController {
                         .setId(id));
     }
 
-    @ApiOperation(value = "获取个人详情")
-    @GetMapping("/info")
-    public ResponseEntity<?> getMyInfo() {
-        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.status(HttpStatus.OK).body(auth.getUserAuthentication());
-    }
 
     @ApiOperation(value = "获取用户列表")
     @GetMapping("/all/{page}")

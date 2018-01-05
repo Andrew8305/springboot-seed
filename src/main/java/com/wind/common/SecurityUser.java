@@ -34,7 +34,6 @@ public class SecurityUser extends User implements UserDetails {
             this.accountNonLocked = user.getEnabled();
             this.authorities = new HashSet<>();
             this.authorities.add(new SimpleGrantedAuthority(user.getAuthority()));
-
         } else {
             throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
         }
