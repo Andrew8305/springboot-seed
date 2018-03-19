@@ -21,7 +21,7 @@ public class ServiceMonitor {
      * in a type in the com.shawn.service package or any sub-package
      * under that.
      */
-    @Pointcut("execution(* com.wind.service..*(..))")
+    @Pointcut("execution(* com.wind.web.service..*(..))")
     private void serviceLayer() {
     }
 

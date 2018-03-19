@@ -20,7 +20,7 @@ public class PerformanceMonitor {
      * com.shawn.service package or any sub-package under that
      * and modified by public.
      */
-    @Pointcut("execution(public * com.wind.web..*(..))")
+    @Pointcut("execution(public * com.wind.web.api..*(..))")
     private void controllerLayer() {
     }
 

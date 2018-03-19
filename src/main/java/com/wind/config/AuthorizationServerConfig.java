@@ -1,28 +1,22 @@
 package com.wind.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.wind.service.UserService;
+import com.wind.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.*;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
 import org.springframework.security.oauth2.provider.token.*;
 import org.springframework.security.oauth2.provider.token.store.*;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Configuration
 @AutoConfigureAfter(DruidAutoConfig.class)

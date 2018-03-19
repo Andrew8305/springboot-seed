@@ -25,7 +25,7 @@ public class SecurityUser extends User implements UserDetails {
             setId(user.getId());
             username = user.getUsername();
             setPassword(user.getPassword());
-            setRegisterdate(user.getRegisterdate());
+            setRegisterDate(user.getRegisterDate());
             setAuthority(user.getAuthority());
             setEnabled(user.getEnabled());
             this.enabled = user.getEnabled();

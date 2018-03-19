@@ -1,116 +1,160 @@
+SET NAMES utf8;
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- ----------------------------
---  Table structure for `seed`.`user`
+--  Table structure for `authority`
 -- ----------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`user` (
+DROP TABLE IF EXISTS `authority`;
+CREATE TABLE `authority` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `comment` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Table structure for `clientdetails`
+-- ----------------------------
+DROP TABLE IF EXISTS `clientdetails`;
+CREATE TABLE `clientdetails` (
+  `appId` varchar(128) NOT NULL,
+  `resourceIds` varchar(256) DEFAULT NULL,
+  `appSecret` varchar(256) DEFAULT NULL,
+  `scope` varchar(256) DEFAULT NULL,
+  `grantTypes` varchar(256) DEFAULT NULL,
+  `redirectUrl` varchar(256) DEFAULT NULL,
+  `authorities` varchar(256) DEFAULT NULL,
+  `access_token_validity` int(11) DEFAULT NULL,
+  `refresh_token_validity` int(11) DEFAULT NULL,
+  `additionalInformation` varchar(4096) DEFAULT NULL,
+  `autoApproveScopes` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`appId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `group`
+-- ----------------------------
+DROP TABLE IF EXISTS `group`;
+CREATE TABLE `group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `comment` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Table structure for `group_authority`
+-- ----------------------------
+DROP TABLE IF EXISTS `group_authority`;
+CREATE TABLE `group_authority` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `group_id` bigint(20) DEFAULT NULL,
+  `authority_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Table structure for `oauth_access_token`
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth_access_token`;
+CREATE TABLE `oauth_access_token` (
+  `token_id` varchar(256) DEFAULT NULL,
+  `token` blob,
+  `authentication_id` varchar(128) NOT NULL,
+  `user_name` varchar(256) DEFAULT NULL,
+  `client_id` varchar(256) DEFAULT NULL,
+  `authentication` blob,
+  `refresh_token` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`authentication_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `oauth_approvals`
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth_approvals`;
+CREATE TABLE `oauth_approvals` (
+  `userId` varchar(256) DEFAULT NULL,
+  `clientId` varchar(256) DEFAULT NULL,
+  `scope` varchar(256) DEFAULT NULL,
+  `status` varchar(10) DEFAULT NULL,
+  `expiresAt` datetime DEFAULT NULL,
+  `lastModifiedAt` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `oauth_client_details`
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth_client_details`;
+CREATE TABLE `oauth_client_details` (
+  `client_id` varchar(128) NOT NULL,
+  `resource_ids` varchar(256) DEFAULT NULL,
+  `client_secret` varchar(256) DEFAULT NULL,
+  `scope` varchar(256) DEFAULT NULL,
+  `authorized_grant_types` varchar(256) DEFAULT NULL,
+  `web_server_redirect_uri` varchar(256) DEFAULT NULL,
+  `authorities` varchar(256) DEFAULT NULL,
+  `access_token_validity` int(11) DEFAULT NULL,
+  `refresh_token_validity` int(11) DEFAULT NULL,
+  `additional_information` varchar(4096) DEFAULT NULL,
+  `autoapprove` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `oauth_client_token`
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth_client_token`;
+CREATE TABLE `oauth_client_token` (
+  `token_id` varchar(256) DEFAULT NULL,
+  `token` blob,
+  `authentication_id` varchar(128) NOT NULL,
+  `user_name` varchar(256) DEFAULT NULL,
+  `client_id` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`authentication_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `oauth_code`
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth_code`;
+CREATE TABLE `oauth_code` (
+  `code` varchar(256) DEFAULT NULL,
+  `authentication` blob
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `oauth_refresh_token`
+-- ----------------------------
+DROP TABLE IF EXISTS `oauth_refresh_token`;
+CREATE TABLE `oauth_refresh_token` (
+  `token_id` varchar(256) DEFAULT NULL,
+  `token` blob,
+  `authentication` blob
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `user`
+-- ----------------------------
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `registerDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `enabled` tinyint(1) NOT NULL DEFAULT 1,
+  `register_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `authority` varchar(50) DEFAULT 'user',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHAR SET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `seed`.`clientdetails`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`clientdetails` (
-  `appId` VARCHAR(128) NOT NULL,
-  `resourceIds` VARCHAR(256) NULL DEFAULT NULL,
-  `appSecret` VARCHAR(256) NULL DEFAULT NULL,
-  `scope` VARCHAR(256) NULL DEFAULT NULL,
-  `grantTypes` VARCHAR(256) NULL DEFAULT NULL,
-  `redirectUrl` VARCHAR(256) NULL DEFAULT NULL,
-  `authorities` VARCHAR(256) NULL DEFAULT NULL,
-  `access_token_validity` INT(11) NULL DEFAULT NULL,
-  `refresh_token_validity` INT(11) NULL DEFAULT NULL,
-  `additionalInformation` VARCHAR(4096) NULL DEFAULT NULL,
-  `autoApproveScopes` VARCHAR(256) NULL DEFAULT NULL,
-  PRIMARY KEY (`appId`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+--  Table structure for `user_group`
+-- ----------------------------
+DROP TABLE IF EXISTS `user_group`;
+CREATE TABLE `user_group` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL,
+  `group_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
--- -----------------------------------------------------
--- Table `seed`.`oauth_access_token`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`oauth_access_token` (
-  `token_id` VARCHAR(256) NULL DEFAULT NULL,
-  `token` BLOB NULL DEFAULT NULL,
-  `authentication_id` VARCHAR(128) NOT NULL,
-  `user_name` VARCHAR(256) NULL DEFAULT NULL,
-  `client_id` VARCHAR(256) NULL DEFAULT NULL,
-  `authentication` BLOB NULL DEFAULT NULL,
-  `refresh_token` VARCHAR(256) NULL DEFAULT NULL,
-  PRIMARY KEY (`authentication_id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `seed`.`oauth_approvals`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`oauth_approvals` (
-  `userId` VARCHAR(256) NULL DEFAULT NULL,
-  `clientId` VARCHAR(256) NULL DEFAULT NULL,
-  `scope` VARCHAR(256) NULL DEFAULT NULL,
-  `status` VARCHAR(10) NULL DEFAULT NULL,
-  `expiresAt` DATETIME NULL DEFAULT NULL,
-  `lastModifiedAt` DATETIME NULL DEFAULT NULL)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `seed`.`oauth_client_details`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`oauth_client_details` (
-  `client_id` VARCHAR(128) NOT NULL,
-  `resource_ids` VARCHAR(256) NULL DEFAULT NULL,
-  `client_secret` VARCHAR(256) NULL DEFAULT NULL,
-  `scope` VARCHAR(256) NULL DEFAULT NULL,
-  `authorized_grant_types` VARCHAR(256) NULL DEFAULT NULL,
-  `web_server_redirect_uri` VARCHAR(256) NULL DEFAULT NULL,
-  `authorities` VARCHAR(256) NULL DEFAULT NULL,
-  `access_token_validity` INT(11) NULL DEFAULT NULL,
-  `refresh_token_validity` INT(11) NULL DEFAULT NULL,
-  `additional_information` VARCHAR(4096) NULL DEFAULT NULL,
-  `autoapprove` VARCHAR(256) NULL DEFAULT NULL,
-  PRIMARY KEY (`client_id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `seed`.`oauth_client_token`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`oauth_client_token` (
-  `token_id` VARCHAR(256) NULL DEFAULT NULL,
-  `token` BLOB NULL DEFAULT NULL,
-  `authentication_id` VARCHAR(128) NOT NULL,
-  `user_name` VARCHAR(256) NULL DEFAULT NULL,
-  `client_id` VARCHAR(256) NULL DEFAULT NULL,
-  PRIMARY KEY (`authentication_id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `seed`.`oauth_code`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`oauth_code` (
-  `code` VARCHAR(256) NULL DEFAULT NULL,
-  `authentication` BLOB NULL DEFAULT NULL)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `seed`.`oauth_refresh_token`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `seed`.`oauth_refresh_token` (
-  `token_id` VARCHAR(256) NULL DEFAULT NULL,
-  `token` BLOB NULL DEFAULT NULL,
-  `authentication` BLOB NULL DEFAULT NULL)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+SET FOREIGN_KEY_CHECKS = 1;

@@ -11,8 +11,8 @@ public class User {
 
     private String password;
 
-    @Column(name = "registerDate")
-    private Date registerdate;
+    @Column(name = "register_date")
+    private Date registerDate;
 
     private Boolean enabled;
 
@@ -61,17 +61,17 @@ public class User {
     }
 
     /**
-     * @return registerDate
+     * @return register_date
      */
-    public Date getRegisterdate() {
-        return registerdate;
+    public Date getRegisterDate() {
+        return registerDate;
     }
 
     /**
-     * @param registerdate
+     * @param registerDate
      */
-    public void setRegisterdate(Date registerdate) {
-        this.registerdate = registerdate;
+    public void setRegisterDate(Date registerDate) {
+        this.registerDate = registerDate;
     }
 
     /**

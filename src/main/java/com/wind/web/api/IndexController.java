@@ -1,4 +1,4 @@
-package com.wind.web;
+package com.wind.web.api;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
