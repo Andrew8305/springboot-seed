@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,18 @@ public class ExtendController<T> extends BaseController<T> {
             result.setCount(service.getCount(column, ids));
         }
         return result;
+    }
+
+    public void relatedResult(List<T> list) throws Exception{
+        Class type = service.getActualClass();
+        Field[] fs = type.getDeclaredFields();
+        for (Field f : fs) {
+            String name = f.getName();
+            if (name.length() > 2 && name.toLowerCase().endsWith("id")) {
+                String typeName = f.getName().substring(0, name.length() - 3);
+                Field relatedService = getClass().getDeclaredField(typeName + "Service");
+            }
+        }
     }
 
     private QueryResult query(String type, String value, int page, String column) throws Exception {
