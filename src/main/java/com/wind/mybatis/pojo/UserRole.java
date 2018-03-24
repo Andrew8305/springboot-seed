@@ -2,16 +2,16 @@ package com.wind.mybatis.pojo;
 
 import javax.persistence.*;
 
-@Table(name = "user_group")
-public class UserGroup {
+@Table(name = "user_role")
+public class UserRole {
     @Id
     private Long id;
 
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "group_id")
-    private Long groupId;
+    @Column(name = "role_id")
+    private Long roleId;
 
     /**
      * @return id
@@ -42,16 +42,16 @@ public class UserGroup {
     }
 
     /**
-     * @return group_id
+     * @return role_id
      */
-    public Long getGroupId() {
-        return groupId;
+    public Long getRoleId() {
+        return roleId;
     }
 
     /**
-     * @param groupId
+     * @param roleId
      */
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 }

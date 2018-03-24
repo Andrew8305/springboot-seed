@@ -2,7 +2,7 @@ package com.wind.mybatis.pojo;
 
 import javax.persistence.*;
 
-public class Group {
+public class Auth {
     @Id
     private Long id;
 

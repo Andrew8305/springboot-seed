@@ -7,6 +7,7 @@
     <properties resource="application.properties"/>
 
     <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="autoDelimitKeywords" value="true"/>
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
@@ -18,9 +19,9 @@
         <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
         <javaClientGenerator targetPackage="com.wind.mybatis.mapper" targetProject="src/main/java" type="XMLMAPPER"/>
         <table tableName="user" />
-        <table tableName="group" />
-        <table tableName="authority" />
-        <table tableName="user_group" />
-        <table tableName="group_authority" />
+        <table tableName="role" />
+        <table tableName="auth" />
+        <table tableName="user_role" />
+        <table tableName="role_auth" />
     </context>
 </generatorConfiguration>

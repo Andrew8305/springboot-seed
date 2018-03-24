@@ -52,7 +52,7 @@ public class UserController extends ExtendController<User> {
 
     @ApiOperation(value = "修改密码")
     @PutMapping("/password")
-    public ResponseEntity<?> changePassword(@RequestBody changePasswordForm form) {
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordForm form) {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userService.selectByName(((SecurityUser) auth.getPrincipal()).getUsername());
         if (user.isPresent() && user.get().getPassword().equals(MD5.getMD5(user.get().getUsername() + form.oldPassword))) {
@@ -66,7 +66,7 @@ public class UserController extends ExtendController<User> {
     }
 
     @Data
-    static class changePasswordForm {
+    static class ChangePasswordForm {
         private String oldPassword;
         private String newPassword;
     }

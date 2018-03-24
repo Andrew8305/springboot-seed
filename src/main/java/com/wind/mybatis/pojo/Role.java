@@ -2,7 +2,7 @@ package com.wind.mybatis.pojo;
 
 import javax.persistence.*;
 
-public class Authority {
+public class Role {
     @Id
     private Long id;
 

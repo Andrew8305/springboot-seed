@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class BaseController<T> {
@@ -15,24 +17,61 @@ public class BaseController<T> {
     @Autowired
     protected BaseService<T> service;
 
+    /**
+     * 获取真实反射类型
+     *
+     * @return 反射类型
+     */
+    Class getActualClass() {
+        Type type = getClass().getGenericSuperclass();
+
+        // 判断是否泛型
+        if (type instanceof ParameterizedType) {
+            // 返回表示此类型实际类型参数的Type对象的数组
+            Type[] types = ((ParameterizedType) type).getActualTypeArguments();
+            return (Class) types[0];  //将第一个泛型T对应的类返回
+        } else {
+            return (Class) type;//若没有给定泛型，则返回Object类
+        }
+    }
+
+    /**
+     * 关联查询
+     *
+     * @param result
+     * @return 关联查询结果
+     */
+    protected PaginatedResult relatedResult(PaginatedResult result) throws Exception {
+        return result;
+    }
+
     @ApiOperation(value = "分页查询实例")
     @GetMapping("/all/{page}")
     public ResponseEntity<?> search(
             @RequestParam(value = "type", required = false, defaultValue = "") String type,
             @RequestParam(value = "value", required = false, defaultValue = "") String value,
-            @PathVariable int page) throws Exception{
+            @RequestParam(value = "table", required = false, defaultValue = "") String table,
+            @PathVariable int page) throws Exception {
         if ("".equals(type)) {
             return ResponseEntity
-                    .ok(new PaginatedResult()
+                    .ok(relatedResult(new PaginatedResult()
                             .setData(service.selectAll(page))
                             .setCurrentPage(page)
-                            .setCount(service.getCount()));
+                            .setCount(service.getCount())));
         } else {
-            return ResponseEntity
-                    .ok(new PaginatedResult()
-                            .setData(service.selectAll(type, value, page))
-                            .setCurrentPage(page)
-                            .setCount(service.getCount(type, value)));
+            if ("".equals(table)) {
+                return ResponseEntity
+                        .ok(relatedResult(new PaginatedResult()
+                                .setData(service.selectAll(type, value, page))
+                                .setCurrentPage(page)
+                                .setCount(service.getCount(type, value))));
+            } else {
+                return ResponseEntity
+                        .ok(relatedResult(new PaginatedResult()
+                                .setData(service.selectRelatedAll(type, value, table, page))
+                                .setCurrentPage(page)
+                                .setCount(service.getCount(type, value, table))));
+            }
         }
     }
 

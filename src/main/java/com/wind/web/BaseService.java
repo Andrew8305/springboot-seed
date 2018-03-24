@@ -2,12 +2,14 @@ package com.wind.web;
 
 import com.github.pagehelper.PageHelper;
 import com.wind.common.Constant;
+import com.wind.common.SpringUtil;
 import com.wind.mybatis.CustomMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public abstract class BaseService<T> {
             Type[] types = ((ParameterizedType) type).getActualTypeArguments();
             return (Class) types[0];  //将第一个泛型T对应的类返回
         } else {
-            return Object.class;//若没有给定泛型，则返回Object类
+            return (Class)type;//若没有给定泛型，则返回Object类
         }
     }
 
@@ -94,6 +96,23 @@ public abstract class BaseService<T> {
         }
         PageHelper.startPage(page, Constant.PAGE_SIZE);
         return mapper.selectByExample(example);
+    }
+
+    /**
+     * 根据字段(字符型)和页数获取实例列表（关联查询）
+     *
+     * @param type  字段
+     * @param value 查询参数(字符型)
+     * @param page  页数
+     * @return 实例列表
+     */
+    public List<T> selectRelatedAll(String type, String value, String table, int page) throws Exception{
+        Object relatedService =  SpringUtil.getBean(table + "Service");
+        Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", String.class, String.class);
+        Object selectList = selectMethod.invoke(relatedService, type, value);
+        Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
+        List<Long> ids = (List<Long>)selectIdsMethod.invoke(relatedService, selectList);
+        return selectAll(table + "Id", ids, page);
     }
 
     /**
@@ -184,6 +203,22 @@ public abstract class BaseService<T> {
         }
         int count = mapper.selectCountByExample(example);
         return count;
+    }
+
+    /**
+     * 根据字段(字符型)获取实例总数（关联查询）
+     *
+     * @param type  字段
+     * @param value 查询参数(字符型)
+     * @return 实例总数
+     */
+    public int getCount(String type, String value, String table) throws Exception{
+        Object relatedService =  SpringUtil.getBean(table + "Service");
+        Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", String.class, String.class);
+        Object selectList = selectMethod.invoke(relatedService, type, value);
+        Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
+        List<Long> ids = (List<Long>)selectIdsMethod.invoke(relatedService, selectList);
+        return getCount(table + "Id", ids);
     }
 
     /**

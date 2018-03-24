@@ -18,7 +18,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                     .antMatchers("/v2/**","/swagger**", "/druid/**").permitAll()
                     .antMatchers(HttpMethod.GET, "/user/{id}").permitAll()
                     .antMatchers("/user/password").authenticated()
-                    .antMatchers("/user/**").hasAuthority("admin")
                     .anyRequest().permitAll();
         }
 }

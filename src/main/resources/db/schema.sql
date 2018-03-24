@@ -2,10 +2,10 @@ SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
---  Table structure for `authority`
+--  Table structure for `auth`
 -- ----------------------------
-DROP TABLE IF EXISTS `authority`;
-CREATE TABLE `authority` (
+DROP TABLE IF EXISTS `auth`;
+CREATE TABLE `auth` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
   `comment` varchar(200) DEFAULT NULL,
@@ -30,28 +30,6 @@ CREATE TABLE `clientdetails` (
   `autoApproveScopes` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`appId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
---  Table structure for `group`
--- ----------------------------
-DROP TABLE IF EXISTS `group`;
-CREATE TABLE `group` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
-  `comment` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- ----------------------------
---  Table structure for `group_authority`
--- ----------------------------
-DROP TABLE IF EXISTS `group_authority`;
-CREATE TABLE `group_authority` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `group_id` bigint(20) DEFAULT NULL,
-  `authority_id` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 --  Table structure for `oauth_access_token`
@@ -133,6 +111,28 @@ CREATE TABLE `oauth_refresh_token` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+--  Table structure for `role`
+-- ----------------------------
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `comment` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+--  Table structure for `role_auth`
+-- ----------------------------
+DROP TABLE IF EXISTS `role_auth`;
+CREATE TABLE `role_auth` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `role_id` bigint(20) DEFAULT NULL,
+  `auth_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
 --  Table structure for `user`
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -147,14 +147,14 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
---  Table structure for `user_group`
+--  Table structure for `user_role`
 -- ----------------------------
-DROP TABLE IF EXISTS `user_group`;
-CREATE TABLE `user_group` (
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE `user_role` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) DEFAULT NULL,
-  `group_id` bigint(20) DEFAULT NULL,
+  `role_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 SET FOREIGN_KEY_CHECKS = 1;
