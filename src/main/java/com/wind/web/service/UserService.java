@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-@Component("userDetailsService")
 public class UserService extends BaseService<User> implements UserDetailsService {
 
     @Override
