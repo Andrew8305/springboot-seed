@@ -1,9 +1,7 @@
 package com.wind.oauth;
 
-import com.wind.config.DruidAutoConfig;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -14,14 +12,8 @@ import org.springframework.security.oauth2.config.annotation.builders.InMemoryCl
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties(OAuth2Properties.class)
@@ -73,6 +65,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                         .accessTokenValiditySeconds(config.getAccessTokenValiditySeconds())
                         .refreshTokenValiditySeconds(config.getRefreshTokenValiditySeconds())
                         .authorizedGrantTypes("refresh_token", "password", "authorization_code")
+                        .redirectUris(config.getRedirectUri())
                         .scopes("all");
             }
         }
