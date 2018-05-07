@@ -25,7 +25,6 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
                 .title("Spring Boot Swagger2 RESTful APIs")
                 .termsOfServiceUrl("http://swagger.io/")
-                .contact("swagger")
                 .version("1.0")
                 .build();
     }
