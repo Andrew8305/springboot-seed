@@ -8,6 +8,7 @@ import io.swagger.annotations.*;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,8 @@ public class UserController extends ExtendController<User> {
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordForm form) {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userService.selectByName(((SecurityUser) auth.getPrincipal()).getUsername());
-        if (user.isPresent() && user.get().getPassword().equals(MD5.getMD5(user.get().getUsername() + form.oldPassword))) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (user.isPresent() && encoder.matches(form.oldPassword, user.get().getPassword())) {
             User instance = user.get();
             instance.setPassword(form.newPassword);
             userService.modifyById(instance);

@@ -1,6 +1,5 @@
 package com.wind.web.service;
 
-import com.wind.common.MD5;
 import com.wind.mybatis.pojo.User;
 import com.wind.common.SecurityUser;
 import com.wind.web.BaseService;
@@ -34,8 +33,9 @@ public class UserService extends BaseService<User> implements UserDetailsService
     @Transactional
     @Override
     public boolean add(User user) {
-        String md5 = MD5.getMD5(user.getPassword());
-        user.setPassword(md5);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String crypt = encoder.encode(user.getPassword());
+        user.setPassword(crypt);
         return mapper.insertUseGeneratedKeys(user) > 0;
     }
 
@@ -43,10 +43,11 @@ public class UserService extends BaseService<User> implements UserDetailsService
     @Override
     public boolean modifyById(User user) {
         User original = mapper.selectByPrimaryKey(user);
-        if (!user.getPassword().equals(original.getPassword()))
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        if (!encoder.matches(user.getPassword(), original.getPassword()))
         {
-            String md5 = MD5.getMD5(user.getPassword());
-            user.setPassword(md5);
+            String crypt = encoder.encode(user.getPassword());
+            user.setPassword(crypt);
         }
         return mapper.updateByPrimaryKey(user) > 0;
     }

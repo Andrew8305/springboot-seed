@@ -2,7 +2,7 @@
 
 ## Introduction
 
-> An example project based on SpringBoot integrated with oauth2 ( token persisted on mysql ), swagger2, restful API, druid, mybatis ( generator and pagehelper included).
+> An example project based on SpringBoot integrated with oauth2 ( token persisted on redis ), swagger2, restful API, druid, mybatis ( generator and pagehelper included).
 
 ## Preparation
 > install plugin `lombok` if you are using IDEA
@@ -25,7 +25,7 @@
 > see `http://localhost:8000/swagger-ui.html `
 
 #### oauth2
->use `curl http://localhost:8000/oauth/token -X POST -u client:security -d "grant_type=password&username=admin&password=adminadmin"` to get access token, for example : `69aaaeb8-49c2-410d-8253-ad6c003c6091`
+>use `curl http://localhost:8000/oauth/token -X POST -u client:security -d "grant_type=password&username=admin&password=admin"` to get access token, for example : `69aaaeb8-49c2-410d-8253-ad6c003c6091`
 
 >then we can use `curl -X PUT -H "Authorization: Bearer 69aaaeb8-49c2-410d-8253-ad6c003c6091" --header "Content-Type: application/json" -d "{  \"newPassword\": \"new\",  \"oldPassword\": \"admin\"}" "http://localhost:8000/user/password"` to modify password
 

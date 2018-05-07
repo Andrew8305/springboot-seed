@@ -50,7 +50,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         endpoints.tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
-        //扩展token返回结果
+        // 扩展token返回结果
         if (jwtAccessTokenConverter != null && tokenEnhancer != null) {
             TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
             List<TokenEnhancer> enhancerList = new ArrayList();
@@ -64,7 +64,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     /**
-     * 配置客户端一些信息
+     * 配置客户端
      *
      * @param clients
      * @throws Exception
@@ -78,8 +78,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 build.withClient(config.getClientId())
                         .secret(password)
                         .accessTokenValiditySeconds(config.getAccessTokenValiditySeconds())
-                        .refreshTokenValiditySeconds(60 * 60 * 24 * 15)
-                        .authorizedGrantTypes("refresh_token", "password", "authorization_code")//OAuth2支持的验证模式
+                        .refreshTokenValiditySeconds(60 * 60 * 24 * 30)
+                        .authorizedGrantTypes("refresh_token", "password", "authorization_code")
                         .redirectUris("http://www.seed.com")
                         .scopes("all");
             }

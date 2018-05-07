@@ -27,7 +27,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.formLogin()
                 .successHandler(appLoginInSuccessHandler)
-                .and().authorizeRequests().anyRequest().permitAll()
+                .and().authorizeRequests().anyRequest().authenticated()
                 .and().csrf().disable();
     }
 
