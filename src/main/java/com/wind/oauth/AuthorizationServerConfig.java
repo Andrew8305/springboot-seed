@@ -4,7 +4,9 @@ import com.wind.config.DruidAutoConfig;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +18,15 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-@AutoConfigureAfter(DruidAutoConfig.class)
+@EnableConfigurationProperties(OAuth2Properties.class)
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+
 
     @Autowired
     private OAuth2Properties oAuth2Properties;
@@ -33,34 +37,23 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Bean
+    public TokenStore getTokenStore() {
+        return new RedisTokenStore(redisConnectionFactory);
+    }
+
     @Autowired
-    private TokenStore tokenStore;
-
-    @Autowired(required = false)
-    private JwtAccessTokenConverter jwtAccessTokenConverter;
-
-    @Autowired(required = false)
-    private CustomTokenEnhancer tokenEnhancer;
+    private RedisConnectionFactory redisConnectionFactory;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.tokenStore(tokenStore)
+        endpoints.tokenStore(getTokenStore())
+                .tokenEnhancer(new CustomTokenEnhancer())
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
-        // 扩展token返回结果
-        if (jwtAccessTokenConverter != null && tokenEnhancer != null) {
-            TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-            List<TokenEnhancer> enhancerList = new ArrayList();
-            enhancerList.add(tokenEnhancer);
-            enhancerList.add(jwtAccessTokenConverter);
-            tokenEnhancerChain.setTokenEnhancers(enhancerList);
-            //jwt
-            endpoints.tokenEnhancer(tokenEnhancerChain)
-                    .accessTokenConverter(jwtAccessTokenConverter);
-        }
     }
 
     /**
@@ -78,9 +71,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 build.withClient(config.getClientId())
                         .secret(password)
                         .accessTokenValiditySeconds(config.getAccessTokenValiditySeconds())
-                        .refreshTokenValiditySeconds(60 * 60 * 24 * 30)
+                        .refreshTokenValiditySeconds(config.getRefreshTokenValiditySeconds())
                         .authorizedGrantTypes("refresh_token", "password", "authorization_code")
-                        .redirectUris("http://www.seed.com")
                         .scopes("all");
             }
         }

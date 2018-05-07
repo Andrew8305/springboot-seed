@@ -14,20 +14,13 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-    /**
-     * 自定义登录成功处理器
-     */
-    @Autowired
-    private AuthenticationSuccessHandler appLoginInSuccessHandler;
-
     @Autowired
     private TokenStore tokenStore;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .successHandler(appLoginInSuccessHandler)
-                .and().authorizeRequests().anyRequest().authenticated()
+        http.authorizeRequests().antMatchers("/h2**", "/oauth**", "/swagger**", "/druid/**").permitAll()
+                .and().authorizeRequests().anyRequest().permitAll()
                 .and().csrf().disable();
     }
 
