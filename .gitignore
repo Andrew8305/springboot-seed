@@ -1,5 +1,6 @@
 *.iml
 *.log
+*.gz
 .DS_Store
 .idea/
 target/

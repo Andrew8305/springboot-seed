@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BaseController<T> {
@@ -33,6 +35,28 @@ public class BaseController<T> {
         } else {
             return (Class) type;//若没有给定泛型，则返回Object类
         }
+    }
+
+    List<Field> getRelatedFields() throws Exception{
+        return getRelatedFields(null);
+    }
+
+    List<Field> getRelatedFields(Class type) throws Exception{
+        if (type == null) {
+            type = getActualClass();
+        }
+        List<Field> result = new ArrayList<>();
+        Field[] fs = type.getDeclaredFields();
+        for (Field f : fs) {
+            String name = f.getName();
+            if (name.length() > 2 && name.toLowerCase().endsWith("id")) {
+                // 获取ID列表
+                Field idField = getActualClass().getDeclaredField(name);
+                idField.setAccessible(true);
+                result.add(idField);
+            }
+        }
+        return result;
     }
 
     /**

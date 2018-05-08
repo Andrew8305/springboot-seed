@@ -106,12 +106,13 @@ public abstract class BaseService<T> {
      * @param page  页数
      * @return 实例列表
      */
+    @SuppressWarnings("unchecked")
     public List<T> selectRelatedAll(String type, String value, String table, int page) throws Exception{
         Object relatedService =  SpringUtil.getBean(table + "Service");
         Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", String.class, String.class);
         Object selectList = selectMethod.invoke(relatedService, type, value);
         Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
-        List<Long> ids = (List<Long>)selectIdsMethod.invoke(relatedService, selectList);
+        List<Long> ids = (List<Long>)selectIdsMethod.invoke(relatedService, (List)selectList);
         return selectAll(table + "Id", ids, page);
     }
 

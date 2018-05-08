@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/h2/**", "/static/**", "/druid/**").permitAll()
                 .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**").permitAll()
                 .antMatchers("/login/**", "/oauth**", "/logout/**").permitAll()
-                .anyRequest().authenticated()
+                //.anyRequest().authenticated()
                 //.and().formLogin().permitAll()   // uncomment when using authorization_code
                 .and().csrf().disable();
     }
