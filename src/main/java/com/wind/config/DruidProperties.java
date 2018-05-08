@@ -9,7 +9,6 @@ public class DruidProperties {
     private String url;
     private String username;
     private String password;
-    private String driverClass;
     private String allow;
     private String filters;
 
