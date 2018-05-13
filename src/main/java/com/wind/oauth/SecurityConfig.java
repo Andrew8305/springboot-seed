@@ -29,9 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests().antMatchers("/h2/**", "/static/**", "/druid/**").permitAll()
                 .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**").permitAll()
-                .antMatchers("/login/**", "/oauth**", "/logout/**").permitAll()
-                //.anyRequest().authenticated()
-                //.and().formLogin().permitAll()   // uncomment when using authorization_code
+                .anyRequest().authenticated()
+                .and().formLogin().permitAll()
                 .and().csrf().disable();
     }
 }

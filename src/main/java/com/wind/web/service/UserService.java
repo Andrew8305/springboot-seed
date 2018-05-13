@@ -13,15 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class UserService extends BaseService<User> implements UserDetailsService {
-
-    @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = new User();
-        user.setUsername(userName);
-        user = mapper.selectOne(user);
-        return new SecurityUser(user);
-    }
+public class UserService extends BaseService<User>{
 
     public Optional<User> selectByName(String username) {
         User user = new User();

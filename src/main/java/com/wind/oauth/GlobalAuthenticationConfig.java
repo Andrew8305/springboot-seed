@@ -1,6 +1,6 @@
 package com.wind.oauth;
 
-import com.wind.web.service.UserService;
+import com.wind.oauth.integration.IntegrationUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class GlobalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private IntegrationUserDetailsService userService;
 
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
