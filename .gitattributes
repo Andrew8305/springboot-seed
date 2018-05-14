@@ -1,1 +1,1 @@
-*.properties filter=ignore
+*.properties filter=gitignore
