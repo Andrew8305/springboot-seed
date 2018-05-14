@@ -1,4 +1,4 @@
-package com.wind.web.api;
+package com.wind.web.controller;
 
 import com.wind.mybatis.pojo.Auth;
 import com.wind.web.ExtendController;

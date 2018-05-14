@@ -16,7 +16,7 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.wind.web.api"))
+                .apis(RequestHandlerSelectors.basePackage("com.wind.web.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }

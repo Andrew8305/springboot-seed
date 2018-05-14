@@ -1,14 +1,11 @@
 package com.wind.oauth;
 
-import com.wind.oauth.integration.IntegrationAuthenticationFilter;
-import com.wind.oauth.integration.IntegrationUserDetailsService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
@@ -26,14 +23,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private OAuth2Properties oAuth2Properties;
 
-    @Autowired
-    private IntegrationAuthenticationFilter integrationAuthenticationFilter;
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private IntegrationUserDetailsService userService;
 
     @Bean
     public TokenStore getTokenStore() {

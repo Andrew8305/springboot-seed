@@ -21,7 +21,7 @@ public class IntegrationAuthenticator {
      *
      * @param integrationAuthentication
      */
-    void prepare(IntegrationAuthentication integrationAuthentication) {
+    public void prepare(IntegrationAuthentication integrationAuthentication) {
     }
 
     /**
@@ -30,7 +30,7 @@ public class IntegrationAuthenticator {
      * @param integrationAuthentication
      * @return
      */
-    boolean support(IntegrationAuthentication integrationAuthentication) {
+    public boolean support(IntegrationAuthentication integrationAuthentication) {
         return StringUtils.isEmpty(integrationAuthentication.getAuthType());
     }
 
@@ -39,7 +39,7 @@ public class IntegrationAuthenticator {
      *
      * @param integrationAuthentication
      */
-    void complete(IntegrationAuthentication integrationAuthentication) {
+    public void complete(IntegrationAuthentication integrationAuthentication) {
     }
 
 }

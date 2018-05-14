@@ -25,6 +25,12 @@
 	</properties>
 
 	<dependencies>
+		<!--wx-->
+		<dependency>
+			<groupId>com.github.binarywang</groupId>
+			<artifactId>weixin-java-miniapp</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 		<!--h2-->
 		<dependency>
 			<groupId>com.h2database</groupId>
