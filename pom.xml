@@ -164,6 +164,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>seed</finalName>
 		<plugins>
 			<!--MG的插件-->
 			<plugin>

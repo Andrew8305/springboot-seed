@@ -18,6 +18,37 @@ public class User {
 
     private String authority;
 
+    @Column(name = "open_id")
+    private String openId;
+
+    @Column(name = "union_id")
+    private String unionId;
+
+    @Column(name = "session_key")
+    private String sessionKey;
+
+    @Column(name = "nickName")
+    private String nickname;
+
+    private Boolean gender;
+
+    private String language;
+
+    private String city;
+
+    private String province;
+
+    private String country;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Column(name = "sms_code")
+    private String smsCode;
+
+    @Column(name = "sms_time")
+    private Date smsTime;
+
     /**
      * @return id
      */
@@ -100,5 +131,173 @@ public class User {
      */
     public void setAuthority(String authority) {
         this.authority = authority;
+    }
+
+    /**
+     * @return open_id
+     */
+    public String getOpenId() {
+        return openId;
+    }
+
+    /**
+     * @param openId
+     */
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    /**
+     * @return union_id
+     */
+    public String getUnionId() {
+        return unionId;
+    }
+
+    /**
+     * @param unionId
+     */
+    public void setUnionId(String unionId) {
+        this.unionId = unionId;
+    }
+
+    /**
+     * @return session_key
+     */
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    /**
+     * @param sessionKey
+     */
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+
+    /**
+     * @return nickName
+     */
+    public String getNickname() {
+        return nickname;
+    }
+
+    /**
+     * @param nickname
+     */
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    /**
+     * @return gender
+     */
+    public Boolean getGender() {
+        return gender;
+    }
+
+    /**
+     * @param gender
+     */
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
+
+    /**
+     * @return language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * @param language
+     */
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    /**
+     * @return city
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * @param city
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    /**
+     * @return province
+     */
+    public String getProvince() {
+        return province;
+    }
+
+    /**
+     * @param province
+     */
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    /**
+     * @return country
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
+     * @param country
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /**
+     * @return avatar_url
+     */
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    /**
+     * @param avatarUrl
+     */
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    /**
+     * @return sms_code
+     */
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    /**
+     * @param smsCode
+     */
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
+    }
+
+    /**
+     * @return sms_time
+     */
+    public Date getSmsTime() {
+        return smsTime;
+    }
+
+    /**
+     * @param smsTime
+     */
+    public void setSmsTime(Date smsTime) {
+        this.smsTime = smsTime;
     }
 }

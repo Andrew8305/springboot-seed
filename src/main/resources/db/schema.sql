@@ -40,11 +40,41 @@ CREATE TABLE `role_auth` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `register_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `authority` varchar(50) DEFAULT 'user',
+  `open_id` varchar(50) DEFAULT '',
+  `union_id` varchar(50) DEFAULT '',
+  `session_key` varchar(50) DEFAULT '',
+  `nickName` varchar(100) DEFAULT '',
+  `gender` tinyint(1) NOT NULL DEFAULT '3',
+  `language` varchar(50) DEFAULT '',
+  `city` varchar(100) DEFAULT '',
+  `province` varchar(100) DEFAULT '',
+  `country` varchar(10) DEFAULT '',
+  `avatar_url` varchar(200) DEFAULT '',
+  `sms_code` varchar(200) DEFAULT '',
+  `sms_time` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- ----------------------------
+--  Table structure for `car`
+-- ----------------------------
+DROP TABLE IF EXISTS `car`;
+CREATE TABLE `car` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(20) DEFAULT NULL,
+  `car_number` varchar(100) DEFAULT '',
+  `car_type` varchar(100) DEFAULT '',
+  `owner` varchar(100) DEFAULT '',
+  `license_picture` varchar(100) DEFAULT '',
+  `vin_code` varchar(100) DEFAULT '',
+  `engine_code` varchar(100) DEFAULT '',
+  `register_date` DATETIME DEFAULT NULL,
+  `issue_date` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
