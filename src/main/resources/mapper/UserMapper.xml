@@ -15,7 +15,7 @@
     <result column="union_id" property="unionId" jdbcType="VARCHAR" />
     <result column="session_key" property="sessionKey" jdbcType="VARCHAR" />
     <result column="nickName" property="nickname" jdbcType="VARCHAR" />
-    <result column="gender" property="gender" jdbcType="BIT" />
+    <result column="gender" property="gender" jdbcType="SMALLINT" />
     <result column="language" property="language" jdbcType="VARCHAR" />
     <result column="city" property="city" jdbcType="VARCHAR" />
     <result column="province" property="province" jdbcType="VARCHAR" />

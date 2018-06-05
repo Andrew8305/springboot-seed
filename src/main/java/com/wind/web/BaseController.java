@@ -37,11 +37,11 @@ public class BaseController<T> {
         }
     }
 
-    List<Field> getRelatedFields() throws Exception{
+    List<Field> getRelatedFields() throws Exception {
         return getRelatedFields(null);
     }
 
-    List<Field> getRelatedFields(Class type) throws Exception{
+    List<Field> getRelatedFields(Class type) throws Exception {
         if (type == null) {
             type = getActualClass();
         }
@@ -50,10 +50,12 @@ public class BaseController<T> {
         for (Field f : fs) {
             String name = f.getName();
             if (name.length() > 2 && name.toLowerCase().endsWith("id")) {
-                // 获取ID列表
-                Field idField = getActualClass().getDeclaredField(name);
-                idField.setAccessible(true);
-                result.add(idField);
+                if (name != "openId" && name != "unionId") {
+                    // 获取ID列表
+                    Field idField = getActualClass().getDeclaredField(name);
+                    idField.setAccessible(true);
+                    result.add(idField);
+                }
             }
         }
         return result;

@@ -49,7 +49,7 @@ CREATE TABLE `user` (
   `union_id` varchar(50) DEFAULT '',
   `session_key` varchar(50) DEFAULT '',
   `nickName` varchar(100) DEFAULT '',
-  `gender` tinyint(1) NOT NULL DEFAULT '3',
+  `gender` smallint NOT NULL DEFAULT '0',
   `language` varchar(50) DEFAULT '',
   `city` varchar(100) DEFAULT '',
   `province` varchar(100) DEFAULT '',

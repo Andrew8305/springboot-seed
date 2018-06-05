@@ -30,7 +30,7 @@ public class User {
     @Column(name = "nickName")
     private String nickname;
 
-    private Boolean gender;
+    private Short gender;
 
     private String language;
 
@@ -192,14 +192,14 @@ public class User {
     /**
      * @return gender
      */
-    public Boolean getGender() {
+    public Short getGender() {
         return gender;
     }
 
     /**
      * @param gender
      */
-    public void setGender(Boolean gender) {
+    public void setGender(Short gender) {
         this.gender = gender;
     }
 
