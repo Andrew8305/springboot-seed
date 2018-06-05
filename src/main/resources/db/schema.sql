@@ -42,11 +42,13 @@ CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
   `register_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `authority` varchar(50) DEFAULT 'user',
-  `open_id` varchar(50) DEFAULT '',
-  `union_id` varchar(50) DEFAULT '',
+  `open_id` varchar(50) DEFAULT NULL,
+  `union_id` varchar(50) DEFAULT NULL,
   `session_key` varchar(50) DEFAULT '',
   `nickName` varchar(100) DEFAULT '',
   `gender` smallint NOT NULL DEFAULT '0',
@@ -59,6 +61,11 @@ CREATE TABLE `user` (
   `sms_time` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
+ALTER TABLE `user` ADD UNIQUE (`username`);
+ALTER TABLE `user` ADD UNIQUE (`email`);
+ALTER TABLE `user` ADD UNIQUE (`phone`);
+ALTER TABLE `user` ADD UNIQUE (`open_id`);
+ALTER TABLE `user` ADD UNIQUE (`union_id`);
 
 -- ----------------------------
 --  Table structure for `car`

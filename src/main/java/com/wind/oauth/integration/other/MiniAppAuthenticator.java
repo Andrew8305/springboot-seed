@@ -13,6 +13,8 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @CommonsLog
 @Component
 public class MiniAppAuthenticator extends IntegrationAuthenticator {
@@ -38,14 +40,29 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
             session = this.wxMaService.getUserService().getSessionInfo(code);
         } catch (WxErrorException e) {
             e.printStackTrace();
-            throw new InternalAuthenticationServiceException("获取微信小程序用户信息失败",e);
+            throw new InternalAuthenticationServiceException("获取微信小程序用户信息失败", e);
         }
         log.info(session);
         String openId = session.getOpenid();
         String sessionKey = session.getSessionKey();
         String unionid = session.getUnionid();
-        User user =  userService.selectByName(integrationAuthentication.getUsername()).get();
-        user.setPassword(passwordEncoder.encode(code));
-        return user;
+        Optional<User> user = userService.selectByOpenId(openId);
+        if (user.isPresent()) {
+            User result = user.get();
+            result.setUsername(openId);
+            result.setPassword(passwordEncoder.encode(code));
+            return result;
+        } else {
+            User newUser = new User();
+            newUser.setOpenId(openId);
+            newUser.setEnabled(true);
+            newUser.setAuthority("user");
+            newUser.setPassword(passwordEncoder.encode(code));
+            newUser.setSessionKey(sessionKey);
+            newUser.setUnionId(unionid);
+            userService.add(newUser);
+            newUser.setUsername(openId);
+            return newUser;
+        }
     }
 }

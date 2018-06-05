@@ -21,6 +21,24 @@ public class UserService extends BaseService<User>{
         return Optional.ofNullable(mapper.selectOne(user));
     }
 
+    public Optional<User> selectByPhone(String phone) {
+        User user = new User();
+        user.setPhone(phone);
+        return Optional.ofNullable(mapper.selectOne(user));
+    }
+
+    public Optional<User> selectByEmail(String email) {
+        User user = new User();
+        user.setEmail(email);
+        return Optional.ofNullable(mapper.selectOne(user));
+    }
+
+    public Optional<User> selectByOpenId(String openId) {
+        User user = new User();
+        user.setOpenId(openId);
+        return Optional.ofNullable(mapper.selectOne(user));
+    }
+
     @Transactional
     @Override
     public boolean add(User user) {
