@@ -49,7 +49,6 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
         Optional<User> user = userService.selectByOpenId(openId);
         if (user.isPresent()) {
             User result = user.get();
-            result.setUsername(openId);
             result.setPassword(passwordEncoder.encode(code));
             return result;
         } else {
@@ -57,12 +56,16 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
             newUser.setOpenId(openId);
             newUser.setEnabled(true);
             newUser.setAuthority("user");
-            newUser.setPassword(passwordEncoder.encode(code));
+            String password = passwordEncoder.encode(code);
+            newUser.setPassword(password);
             newUser.setSessionKey(sessionKey);
             newUser.setUnionId(unionid);
             userService.add(newUser);
-            newUser.setUsername(openId);
-            return newUser;
+            User result = new User();
+            result.setPassword(password);
+            result.setEnabled(true);
+            result.setAuthority("user");
+            return result;
         }
     }
 }
