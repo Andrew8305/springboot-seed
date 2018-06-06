@@ -2,7 +2,7 @@
 
 ## Introduction
 
-> An example project based on SpringBoot integrated with oauth2 ( token persisted on redis ), swagger2, restful API, druid, mybatis ( generator and pagehelper included).
+> An example project based on SpringBoot2 integrated with oauth2 ( token persisted on redis ), swagger2, restful API, h2db, wechat miniapp, druid, mybatis ( generator and pagehelper included).
 
 ## Preparation
 > install plugin `lombok` if you are using IDEA
@@ -17,6 +17,10 @@
 
 > username `root` and password `root` is same as mysql database
 
+#### h2db console
+> see `http://localhost:8000/h2`
+
+> active when spring.profiles.active=dev
 
 #### mybatis generator
 > run `mvn mybatis-generator:generate`
@@ -32,10 +36,6 @@
 >also `curl http://localhost:8000/user/1 -X DELETE -H "Authorization: Bearer 69aaaeb8-49c2-410d-8253-ad6c003c6091"` to access other authenticated url
 
 >also with authorization_code `http://localhost:8000/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://www.baidu.com`
-
-#### remote service
-
-> `https://github.com/ustcwudi/SpringBoot-Seed-Service`
 
 #### remote service & client
 
