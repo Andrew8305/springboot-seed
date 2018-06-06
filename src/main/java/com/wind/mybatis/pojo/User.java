@@ -11,6 +11,9 @@ public class User {
 
     private String password;
 
+    @Column(name = "auth_type")
+    private String authType;
+
     private String email;
 
     private String phone;
@@ -93,6 +96,20 @@ public class User {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return auth_type
+     */
+    public String getAuthType() {
+        return authType;
+    }
+
+    /**
+     * @param authType
+     */
+    public void setAuthType(String authType) {
+        this.authType = authType;
     }
 
     /**

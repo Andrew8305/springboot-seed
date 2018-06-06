@@ -2,6 +2,7 @@ package com.wind.oauth.integration.other;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import com.wind.common.SecurityUser;
 import com.wind.mybatis.pojo.User;
 import com.wind.oauth.integration.IntegrationAuthentication;
 import com.wind.oauth.integration.IntegrationAuthenticator;
@@ -30,10 +31,10 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
 
     @Override
     public boolean support(IntegrationAuthentication integrationAuthentication) {
-        return "wx".equals(integrationAuthentication.getAuthType());
+        return "wx_app".equals(integrationAuthentication.getAuthType());
     }
 
-    public User authenticate(IntegrationAuthentication integrationAuthentication) {
+    public SecurityUser authenticate(IntegrationAuthentication integrationAuthentication) {
         WxMaJscode2SessionResult session;
         String code = integrationAuthentication.getAuthParameter("password");
         try {
@@ -50,21 +51,18 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
         if (user.isPresent()) {
             User result = user.get();
             result.setPassword(passwordEncoder.encode(code));
-            return result;
+            return new SecurityUser(result);
         } else {
             User newUser = new User();
+            newUser.setAuthType("wx_app");
             newUser.setOpenId(openId);
-            newUser.setEnabled(true);
-            newUser.setAuthority("user");
-            String password = passwordEncoder.encode(code);
-            newUser.setPassword(password);
             newUser.setSessionKey(sessionKey);
             newUser.setUnionId(unionid);
+            newUser.setEnabled(true);
+            newUser.setAuthority("user");
+            newUser.setPassword(passwordEncoder.encode(code));
+            SecurityUser result = new SecurityUser(newUser);
             userService.add(newUser);
-            User result = new User();
-            result.setPassword(password);
-            result.setEnabled(true);
-            result.setAuthority("user");
             return result;
         }
     }

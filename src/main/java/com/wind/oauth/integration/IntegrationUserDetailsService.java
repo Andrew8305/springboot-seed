@@ -1,7 +1,6 @@
 package com.wind.oauth.integration;
 
 import com.wind.common.SecurityUser;
-import com.wind.mybatis.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,16 +22,16 @@ public class IntegrationUserDetailsService implements UserDetailsService {
             integrationAuthentication = new IntegrationAuthentication();
         }
         integrationAuthentication.setUsername(username);
-        User user = this.authenticate(integrationAuthentication);
+        SecurityUser user = this.authenticate(integrationAuthentication);
 
         if(user == null){
             throw new UsernameNotFoundException("用户名错误");
         }
 
-        return new SecurityUser(user);
+        return user;
     }
 
-    private User authenticate(IntegrationAuthentication integrationAuthentication) {
+    private SecurityUser authenticate(IntegrationAuthentication integrationAuthentication) {
         if (this.authenticators != null) {
             for (IntegrationAuthenticator authenticator : authenticators) {
                 if (authenticator.support(integrationAuthentication)) {

@@ -1,6 +1,6 @@
 package com.wind.oauth.integration;
 
-import com.wind.mybatis.pojo.User;
+import com.wind.common.SecurityUser;
 import com.wind.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,8 +12,8 @@ public class IntegrationAuthenticator {
     @Autowired
     private UserService userService;
 
-    public User authenticate(IntegrationAuthentication integrationAuthentication) {
-        return userService.selectByName(integrationAuthentication.getUsername()).get();
+    public SecurityUser authenticate(IntegrationAuthentication integrationAuthentication) {
+        return new SecurityUser(userService.selectByName(integrationAuthentication.getUsername()).get());
     }
 
     /**
