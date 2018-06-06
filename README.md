@@ -38,11 +38,15 @@
 >also with authorization_code `http://localhost:8000/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://www.baidu.com`
 
 #### oauth2 with wechat miniapp login code
-baseURL `https://www.*.com`
-body `client_id=client&client_secret=security&grant_type=password&auth_type=wx_app&username=%3F&password=###code###`
-method `POST`
-head Content-Type `application/x-www-form-urlencoded`
-url `/oauth/token`
+>baseURL `https://www.*.com`
+
+>body `client_id=client&client_secret=security&grant_type=password&auth_type=wx_app&username=%3F&password=###code###`
+
+>method `POST`
+
+>head Content-Type `application/x-www-form-urlencoded`
+
+>url `/oauth/token`
 
 #### remote service & client
 
