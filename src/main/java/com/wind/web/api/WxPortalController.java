@@ -4,11 +4,17 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaMessage;
 import cn.binarywang.wx.miniapp.constant.WxMaConstants;
 import cn.binarywang.wx.miniapp.message.WxMaMessageRouter;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.apachecommons.CommonsLog;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Objects;
 
 @CommonsLog
@@ -36,6 +42,15 @@ public class WxPortalController {
         }
 
         return "非法请求";
+    }
+
+    @ApiOperation(value = "绑定微信个人信息")
+    @PutMapping("/bind")
+    public ResponseEntity<?> bindUserInfo(@RequestBody Map<String, Object> params) {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        log.info(auth.getDetails());
+        log.info(params);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping(produces = "application/xml; charset=UTF-8")
