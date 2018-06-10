@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/h2/**", "/wechat/portal", "/static/**", "/druid/**").permitAll()
                 .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**").permitAll()
                 .anyRequest().authenticated()
-                //.and().formLogin().permitAll()
+                .and().formLogin().permitAll()
                 .and().csrf().disable();
     }
 }

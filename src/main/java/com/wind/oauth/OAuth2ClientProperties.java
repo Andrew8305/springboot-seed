@@ -7,6 +7,6 @@ public class OAuth2ClientProperties {
     private String clientId;
     private String clientSecret;
     private String redirectUri;
-    private Integer accessTokenValiditySeconds = 60 * 60;
+    private Integer accessTokenValiditySeconds = 60 * 60 * 24;
     private Integer refreshTokenValiditySeconds = 60 * 60 * 30 * 24;
 }

@@ -35,12 +35,12 @@
 
 >also `curl http://localhost:8000/user/1 -X DELETE -H "Authorization: Bearer 69aaaeb8-49c2-410d-8253-ad6c003c6091"` to access other authenticated url
 
->also with authorization_code `http://localhost:8000/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://www.baidu.com`
+>authorization_code: `http://localhost:8000/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://www.baidu.com` (comment @EnableResourceServer)
 
 #### oauth2 with wechat miniapp login code
 >baseURL `https://www.*.com`
 
->body `client_id=client&client_secret=security&grant_type=password&auth_type=wx_app&username=%3F&password=###code###`
+>body `client_id=client&client_secret=security&grant_type=password&auth_type=wx_app&username=%3F&password=$code`
 
 >method `POST`
 
@@ -51,4 +51,5 @@
 #### remote service & client
 
 > `https://github.com/ustcwudi/springboot-service`
+
 > `https://github.com/ustcwudi/vue-seed`
