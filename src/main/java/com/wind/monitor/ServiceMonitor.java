@@ -39,7 +39,7 @@ public class ServiceMonitor {
         log.error("[" + signature.toShortString() + "]" + Arrays.toString(args) + "[" + e.toString() + "]");
 
         // Throw a new server internal error exception
-        throw new ServerInternalErrorException();
+        throw new ServerInternalErrorException(e.getMessage(), e);
     }
 
 }

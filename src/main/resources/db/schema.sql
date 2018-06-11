@@ -56,7 +56,7 @@ CREATE TABLE `user` (
   `language` varchar(50) DEFAULT '',
   `city` varchar(100) DEFAULT '',
   `province` varchar(100) DEFAULT '',
-  `country` varchar(10) DEFAULT '',
+  `country` varchar(100) DEFAULT '',
   `avatar_url` varchar(200) DEFAULT '',
   `sms_code` varchar(200) DEFAULT '',
   `sms_time` DATETIME DEFAULT NULL,
