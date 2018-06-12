@@ -52,7 +52,6 @@ public class WxPortalController {
 
     @ApiOperation(value = "绑定微信个人信息" )
     @PutMapping("/bind" )
-    @SuppressWarnings("unchecked" )
     public ResponseEntity<?> bindUserInfo(@RequestBody Map<String, Object> params) {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         SecurityUser principal = (SecurityUser) auth.getPrincipal();

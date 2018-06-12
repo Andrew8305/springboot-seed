@@ -11,8 +11,6 @@ import java.util.*;
 
 @Data
 public class SecurityUser implements UserDetails {
-
-    private Long id;
     private String username;
     private String password;
     private String authType;
@@ -21,13 +19,6 @@ public class SecurityUser implements UserDetails {
     private String openId;
     private String unionId;
     private String sessionKey;
-    private String city;
-    private String province;
-    private String country;
-    private String nickname;
-    private Short gender;
-    private String language;
-    private String avatarUrl;
     private boolean enabled;
     private boolean accountNonExpired;
     private boolean credentialsNonExpired;
@@ -36,23 +27,15 @@ public class SecurityUser implements UserDetails {
 
     public SecurityUser(User user) {
         if (user != null) {
-            setId(user.getId());
             setUsername(user.getUsername());
             setPassword(user.getPassword());
-            setEnabled(user.getEnabled());
             setAuthType(user.getAuthType());
             setEmail(user.getEmail());
             setPhone(user.getPhone());
             setOpenId(user.getOpenId());
             setUnionId(user.getUnionId());
             setSessionKey(user.getSessionKey());
-            setCity(user.getCity());
-            setProvince(user.getProvince());
-            setCountry(user.getCountry());
-            setNickname(user.getNickname());
-            setGender(user.getGender());
-            setLanguage(user.getLanguage());
-            setAvatarUrl(user.getAvatarUrl());
+            setEnabled(user.getEnabled());
             setAccountNonExpired(user.getEnabled());
             setCredentialsNonExpired(user.getEnabled());
             setAccountNonLocked(user.getEnabled());
