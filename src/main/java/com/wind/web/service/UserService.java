@@ -1,7 +1,7 @@
 package com.wind.web.service;
 
 import com.wind.mybatis.pojo.User;
-import com.wind.web.BaseService;
+import com.wind.web.ExtendService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class UserService extends BaseService<User> {
+public class UserService extends ExtendService<User> {
 
     public Optional<User> selectByName(String username) {
         User user = new User();

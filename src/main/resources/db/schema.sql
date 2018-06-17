@@ -2,35 +2,28 @@ SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
---  Table structure for `auth`
+--  Table structure for `permission`
 -- ----------------------------
-DROP TABLE IF EXISTS `auth`;
-CREATE TABLE `auth` (
+DROP TABLE IF EXISTS `permission`;
+CREATE TABLE `permission` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `target` varchar(50) DEFAULT NULL,
+  `permission_name` varchar(50) DEFAULT NULL,
   `comment` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
 -- ----------------------------
---  Table structure for `role`
+--  Table structure for `department`
 -- ----------------------------
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
+DROP TABLE IF EXISTS `department`;
+CREATE TABLE `department` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) DEFAULT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `department_name` varchar(50) DEFAULT NULL,
+  `duty` varchar(50) DEFAULT NULL,
   `comment` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-);
-
--- ----------------------------
---  Table structure for `role_auth`
--- ----------------------------
-DROP TABLE IF EXISTS `role_auth`;
-CREATE TABLE `role_auth` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `role_id` bigint(20) DEFAULT NULL,
-  `auth_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -47,7 +40,7 @@ CREATE TABLE `user` (
   `phone` varchar(50) DEFAULT NULL,
   `register_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `authority` varchar(50) DEFAULT 'user',
+  `role` varchar(50) DEFAULT NULL,
   `open_id` varchar(50) DEFAULT NULL,
   `union_id` varchar(50) DEFAULT NULL,
   `session_key` varchar(50) DEFAULT '',
@@ -74,7 +67,7 @@ ALTER TABLE `user` ADD UNIQUE (`union_id`);
 DROP TABLE IF EXISTS `car`;
 CREATE TABLE `car` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) NOT NULL,
   `car_number` varchar(100) DEFAULT '',
   `car_type` varchar(100) DEFAULT '',
   `owner` varchar(100) DEFAULT '',
@@ -83,17 +76,6 @@ CREATE TABLE `car` (
   `engine_code` varchar(100) DEFAULT '',
   `register_date` DATETIME DEFAULT NULL,
   `issue_date` DATETIME DEFAULT NULL,
-  PRIMARY KEY (`id`)
-);
-
--- ----------------------------
---  Table structure for `user_role`
--- ----------------------------
-DROP TABLE IF EXISTS `user_role`;
-CREATE TABLE `user_role` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL,
-  `role_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 

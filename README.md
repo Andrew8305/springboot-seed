@@ -35,8 +35,6 @@
 
 >also `curl http://localhost:8000/user/1 -X DELETE -H "Authorization: Bearer 69aaaeb8-49c2-410d-8253-ad6c003c6091"` to access other authenticated url
 
->authorization_code: `http://localhost:8000/oauth/authorize?response_type=code&client_id=client&redirect_uri=http://www.baidu.com` (comment @EnableResourceServer)
-
 #### oauth2 with wechat miniapp login code
 >baseURL `https://www.*.com`
 

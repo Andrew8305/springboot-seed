@@ -23,7 +23,7 @@ public class User {
 
     private Boolean enabled;
 
-    private String authority;
+    private String role;
 
     @Column(name = "open_id")
     private String openId;
@@ -169,17 +169,17 @@ public class User {
     }
 
     /**
-     * @return authority
+     * @return role
      */
-    public String getAuthority() {
-        return authority;
+    public String getRole() {
+        return role;
     }
 
     /**
-     * @param authority
+     * @param role
      */
-    public void setAuthority(String authority) {
-        this.authority = authority;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     /**

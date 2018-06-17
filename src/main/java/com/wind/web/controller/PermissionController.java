@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user_role")
-public class UserRoleController extends ExtendController<UserRole> {
+@RequestMapping("/permission")
+public class PermissionController extends ExtendController<Permission> {
 }

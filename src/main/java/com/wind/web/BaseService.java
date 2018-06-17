@@ -90,7 +90,7 @@ public abstract class BaseService<T> {
         example.setOrderByClause("id desc");
         Example.Criteria criteria = example.createCriteria();
         if (type.toLowerCase().endsWith("id")) {
-            criteria.andEqualTo(Long.valueOf(value));
+            criteria.andEqualTo(type, Long.valueOf(value));
         } else {
             criteria.andLike(type, "%" + value + "%");
         }
@@ -128,7 +128,7 @@ public abstract class BaseService<T> {
         example.setOrderByClause("id desc");
         Example.Criteria criteria = example.createCriteria();
         if (type.toLowerCase().endsWith("id")) {
-            criteria.andEqualTo(Long.valueOf(value));
+            criteria.andEqualTo(type, Long.valueOf(value));
         } else {
             criteria.andLike(type, "%" + value + "%");
         }
@@ -198,7 +198,7 @@ public abstract class BaseService<T> {
         Example example = new Example(getActualClass());
         Example.Criteria criteria = example.createCriteria();
         if (type.toLowerCase().endsWith("id")) {
-            criteria.andEqualTo(Long.valueOf(value));
+            criteria.andEqualTo(type, Long.valueOf(value));
         } else {
             criteria.andLike(type, "%" + value + "%");
         }

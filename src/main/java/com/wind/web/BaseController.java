@@ -17,7 +17,7 @@ import java.util.List;
 public class BaseController<T> {
 
     @Autowired
-    protected BaseService<T> service;
+    protected ExtendService<T> service;
 
     /**
      * 获取真实反射类型

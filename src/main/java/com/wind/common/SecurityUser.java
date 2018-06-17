@@ -11,6 +11,7 @@ import java.util.*;
 
 @Data
 public class SecurityUser implements UserDetails {
+    private Long id;
     private String username;
     private String password;
     private String authType;
@@ -27,6 +28,7 @@ public class SecurityUser implements UserDetails {
 
     public SecurityUser(User user) {
         if (user != null) {
+            setId(user.getId());
             setUsername(user.getUsername());
             setPassword(user.getPassword());
             setAuthType(user.getAuthType());
@@ -40,7 +42,7 @@ public class SecurityUser implements UserDetails {
             setCredentialsNonExpired(user.getEnabled());
             setAccountNonLocked(user.getEnabled());
             setAuthorities(new HashSet<>());
-            getAuthorities().add(new SimpleGrantedAuthority(user.getAuthority()));
+            getAuthorities().add(new SimpleGrantedAuthority(user.getRole()));
         } else {
             throw new IllegalArgumentException("Cannot pass null or empty values to constructor");
         }
