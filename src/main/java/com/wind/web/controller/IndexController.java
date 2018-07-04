@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -52,5 +53,11 @@ public class IndexController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
+    }
+
+    @ApiOperation(value = "获取服务器时间")
+    @GetMapping("/time")
+    public ResponseEntity<?> getTime(){
+        return ResponseEntity.status(HttpStatus.OK).body(new Date());
     }
 }

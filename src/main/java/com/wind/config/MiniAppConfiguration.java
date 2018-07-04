@@ -37,7 +37,7 @@ public class MiniAppConfiguration {
 
     private final WxMaMessageHandler logHandler = (wxMessage, context, service, sessionManager) -> {
         log.info("wechat message: " + wxMessage.toString());
-        if (wxMessage.getEvent().equals("user_enter_tempsession")) {
+        if (wxMessage.toString().contains("user_enter_tempsession")) {
             log.info("user enter");
         } else {
             service.getMsgService().sendKefuMsg(WxMaKefuMessage.newTextBuilder().content("收到信息为：" + wxMessage.toJson())
