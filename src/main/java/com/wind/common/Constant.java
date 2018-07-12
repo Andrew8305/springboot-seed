@@ -6,4 +6,6 @@ public final class Constant {
 
     // Default size of per page
     public static final int PAGE_SIZE = 20;
+
+    public static final int ALL_PAGE = -999;
 }

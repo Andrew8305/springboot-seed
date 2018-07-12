@@ -1,4 +1,4 @@
-package com.wind.web;
+package com.wind.web.common;
 
 import com.wind.common.PaginatedResult;
 import com.wind.common.SpringUtil;

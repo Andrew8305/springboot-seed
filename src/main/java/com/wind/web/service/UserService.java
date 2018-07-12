@@ -1,7 +1,7 @@
 package com.wind.web.service;
 
 import com.wind.mybatis.pojo.User;
-import com.wind.web.ExtendService;
+import com.wind.web.common.ExtendService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

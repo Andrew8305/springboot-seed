@@ -1,7 +1,7 @@
 package com.wind.web.controller;
 
 import com.wind.common.*;
-import com.wind.web.ExtendController;
+import com.wind.web.common.ExtendController;
 import com.wind.web.service.*;
 import com.wind.mybatis.pojo.User;
 import io.swagger.annotations.*;

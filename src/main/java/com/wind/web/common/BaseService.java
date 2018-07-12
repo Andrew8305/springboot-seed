@@ -1,4 +1,4 @@
-package com.wind.web;
+package com.wind.web.common;
 
 import com.github.pagehelper.PageHelper;
 import com.wind.common.Constant;
@@ -15,6 +15,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.wind.common.Constant.ALL_PAGE;
 
 public abstract class BaseService<T> {
 
@@ -35,7 +37,7 @@ public abstract class BaseService<T> {
             Type[] types = ((ParameterizedType) type).getActualTypeArguments();
             return (Class) types[0];  //将第一个泛型T对应的类返回
         } else {
-            return (Class)type;//若没有给定泛型，则返回Object类
+            return (Class) type;//若没有给定泛型，则返回Object类
         }
     }
 
@@ -86,15 +88,56 @@ public abstract class BaseService<T> {
      * @return 实例列表
      */
     public List<T> selectAll(String type, String value, int page) {
+        if (type.toLowerCase().endsWith("id")) {
+            return selectAll(page, new QueryParameter(type, QueryParameterMethod.EQUAL, value, QueryParameterType.LONG));
+        } else {
+            return selectAll(page, new QueryParameter(type, QueryParameterMethod.LIKE, value, QueryParameterType.STRING));
+        }
+    }
+
+    /**
+     * 根据查询参数获取实例列表
+     *
+     * @param parameters 查询参数
+     * @return 实例列表
+     */
+    public List<T> selectAll(QueryParameter... parameters) {
+        return selectAll(ALL_PAGE, parameters);
+    }
+
+    /**
+     * 根据查询参数和页数获取实例列表
+     *
+     * @param parameters 查询参数
+     * @param page       页数
+     * @return 实例列表
+     */
+    public List<T> selectAll(int page, QueryParameter... parameters) {
         Example example = new Example(getActualClass());
         example.setOrderByClause("id desc");
         Example.Criteria criteria = example.createCriteria();
-        if (type.toLowerCase().endsWith("id")) {
-            criteria.andEqualTo(type, Long.valueOf(value));
-        } else {
-            criteria.andLike(type, "%" + value + "%");
+        for (QueryParameter parameter : parameters) {
+            Object value = null;
+            switch (parameter.getValueType()) {
+                case LONG:
+                    value = Long.parseLong(parameter.getValue());
+                    break;
+                case STRING:
+                    value = parameter.getValue();
+                    break;
+            }
+            switch (parameter.getMethod()) {
+                case EQUAL:
+                    criteria.andEqualTo(parameter.getType(), value);
+                    break;
+                case LIKE:
+                    criteria.andLike(parameter.getType(), "%" + value + "%");
+                    break;
+            }
         }
-        PageHelper.startPage(page, Constant.PAGE_SIZE);
+        if (page != ALL_PAGE) {
+            PageHelper.startPage(page, Constant.PAGE_SIZE);
+        }
         return mapper.selectByExample(example);
     }
 
@@ -107,32 +150,28 @@ public abstract class BaseService<T> {
      * @return 实例列表
      */
     @SuppressWarnings("unchecked")
-    public List<T> selectRelatedAll(String type, String value, String table, int page) throws Exception{
-        Object relatedService =  SpringUtil.getBean(table + "Service");
+    public List<T> selectRelatedAll(String type, String value, String table, int page) throws Exception {
+        Object relatedService = SpringUtil.getBean(table + "Service");
         Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", String.class, String.class);
         Object selectList = selectMethod.invoke(relatedService, type, value);
         Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
-        List<Long> ids = (List<Long>)selectIdsMethod.invoke(relatedService, (List)selectList);
+        List<Long> ids = (List<Long>) selectIdsMethod.invoke(relatedService, (List) selectList);
         return selectAll(table + "Id", ids, page);
     }
 
     /**
      * 根据字段(字符型)获取实例列表
      *
-     * @param type 字段
+     * @param type  字段
      * @param value 查询参数(字符型)
      * @return 实例列表
      */
     public List<T> selectAll(String type, String value) {
-        Example example = new Example(getActualClass());
-        example.setOrderByClause("id desc");
-        Example.Criteria criteria = example.createCriteria();
         if (type.toLowerCase().endsWith("id")) {
-            criteria.andEqualTo(type, Long.valueOf(value));
+            return selectAll(new QueryParameter(type, QueryParameterMethod.EQUAL, value, QueryParameterType.LONG));
         } else {
-            criteria.andLike(type, "%" + value + "%");
+            return selectAll(new QueryParameter(type, QueryParameterMethod.LIKE, value, QueryParameterType.STRING));
         }
-        return mapper.selectByExample(example);
     }
 
     /**
@@ -188,6 +227,38 @@ public abstract class BaseService<T> {
     }
 
     /**
+     * 根据查询参数获取实例总数
+     *
+     * @param parameters 查询参数
+     * @return 实例总数
+     */
+    public int getCount(QueryParameter... parameters) {
+        Example example = new Example(getActualClass());
+        Example.Criteria criteria = example.createCriteria();
+        for (QueryParameter parameter : parameters) {
+            Object value = null;
+            switch (parameter.getValueType()) {
+                case STRING:
+                    value = parameter.getValue();
+                    break;
+                case LONG:
+                    value = Long.parseLong(parameter.getValue());
+                    break;
+            }
+            switch (parameter.getMethod()) {
+                case LIKE:
+                    criteria.andLike(parameter.getType(), "%" + value + "%");
+                    break;
+                case EQUAL:
+                    criteria.andEqualTo(parameter.getType(), value);
+                    break;
+            }
+        }
+        int count = mapper.selectCountByExample(example);
+        return count;
+    }
+
+    /**
      * 根据字段(字符型)获取实例总数
      *
      * @param type  字段
@@ -195,15 +266,11 @@ public abstract class BaseService<T> {
      * @return 实例总数
      */
     public int getCount(String type, String value) {
-        Example example = new Example(getActualClass());
-        Example.Criteria criteria = example.createCriteria();
         if (type.toLowerCase().endsWith("id")) {
-            criteria.andEqualTo(type, Long.valueOf(value));
+            return getCount(new QueryParameter(type, QueryParameterMethod.EQUAL, value, QueryParameterType.LONG));
         } else {
-            criteria.andLike(type, "%" + value + "%");
+            return getCount(new QueryParameter(type, QueryParameterMethod.LIKE, value, QueryParameterType.STRING));
         }
-        int count = mapper.selectCountByExample(example);
-        return count;
     }
 
     /**
@@ -213,20 +280,20 @@ public abstract class BaseService<T> {
      * @param value 查询参数(字符型)
      * @return 实例总数
      */
-    public int getCount(String type, String value, String table) throws Exception{
-        Object relatedService =  SpringUtil.getBean(table + "Service");
+    public int getCount(String type, String value, String table) throws Exception {
+        Object relatedService = SpringUtil.getBean(table + "Service");
         Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", String.class, String.class);
         Object selectList = selectMethod.invoke(relatedService, type, value);
         Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
-        List<Long> ids = (List<Long>)selectIdsMethod.invoke(relatedService, selectList);
+        List<Long> ids = (List<Long>) selectIdsMethod.invoke(relatedService, selectList);
         return getCount(table + "Id", ids);
     }
 
     /**
      * 根据字段(ID列表)获取实例总数
      *
-     * @param type  字段
-     * @param ids ID列表
+     * @param type 字段
+     * @param ids  ID列表
      * @return 实例总数
      */
     public int getCount(String type, List<Long> ids) {

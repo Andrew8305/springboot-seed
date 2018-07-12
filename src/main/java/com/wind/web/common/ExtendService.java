@@ -1,4 +1,4 @@
-package com.wind.web;
+package com.wind.web.common;
 
 import tk.mybatis.mapper.entity.Example;
 

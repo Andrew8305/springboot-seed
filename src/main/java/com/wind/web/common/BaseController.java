@@ -1,4 +1,4 @@
-package com.wind.web;
+package com.wind.web.common;
 
 import com.wind.common.PaginatedResult;
 import com.wind.exception.ResourceNotFoundException;
@@ -84,6 +84,7 @@ public class BaseController<T> {
                             .setData(service.selectAll(page))
                             .setCurrentPage(page)
                             .setCount(service.getCount())));
+
         } else {
             if ("".equals(table)) {
                 return ResponseEntity
@@ -98,6 +99,29 @@ public class BaseController<T> {
                                 .setCurrentPage(page)
                                 .setCount(service.getCount(type, value, table))));
             }
+        }
+    }
+
+    @ApiOperation(value = "高级分页查询实例")
+    @PostMapping("/all/{page}")
+    public ResponseEntity<?> search(
+            @RequestBody QueryParameter[] query,
+            @RequestParam(value = "table", required = false, defaultValue = "") String table,
+            @PathVariable int page) throws Exception {
+        if ("".equals(table)) {
+            return ResponseEntity
+                    .ok(relatedResult(new PaginatedResult()
+                            .setData(service.selectAll(page, query))
+                            .setCurrentPage(page)
+                            .setCount(service.getCount(query))));
+
+        } else {
+            return ResponseEntity.ok().build();
+//            return ResponseEntity
+//                    .ok(relatedResult(new PaginatedResult()
+//                            .setData(service.selectRelatedAll(type, value, table, page))
+//                            .setCurrentPage(page)
+//                            .setCount(service.getCount(type, value, table))));
         }
     }
 
