@@ -42,14 +42,6 @@ public class IndexController {
                     .header("permissions",  mapper.writeValueAsString(permissions))
                     .header("departments",  mapper.writeValueAsString(departments))
                     .body(user);
-        } else if ("wx_app".equals(principal.getAuthType())) {
-            User user = userService.selectByOpenId(principal.getOpenId()).get();
-            List<Department> departments = departmentService.selectAllByUserId(user.getId());
-            List<Permission> permissions = permissionService.selectAllByUserId(user.getId());
-            return ResponseEntity.status(HttpStatus.OK)
-                    .header("permissions",  mapper.writeValueAsString(permissions))
-                    .header("departments",  mapper.writeValueAsString(departments))
-                    .body(user);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }

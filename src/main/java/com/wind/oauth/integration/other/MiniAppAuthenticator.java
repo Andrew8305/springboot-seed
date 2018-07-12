@@ -47,7 +47,7 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
         log.info(session);
         String openId = session.getOpenid();
         String sessionKey = session.getSessionKey();
-        String unionid = session.getUnionid();
+        String unionId = session.getUnionid();
         Optional<User> user = userService.selectByOpenId(openId);
         if (user.isPresent()) {
             User result = user.get();
@@ -58,12 +58,14 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
             newUser.setAuthType("wx_app");
             newUser.setOpenId(openId);
             newUser.setSessionKey(sessionKey);
-            newUser.setUnionId(unionid);
+            newUser.setUnionId(unionId);
             newUser.setEnabled(true);
             newUser.setRole(Constant.DEFAULT_ROLE);
             newUser.setPassword(passwordEncoder.encode(code));
             SecurityUser result = new SecurityUser(newUser);
             userService.add(newUser);
+            // to get h2 db auto increment id
+            result.setId(userService.selectByOpenId(openId).get().getId());
             return result;
         }
     }

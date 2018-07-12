@@ -55,7 +55,7 @@ public class WxPortalController {
     public ResponseEntity<?> bindUserInfo(@RequestBody Map<String, Object> params) {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         SecurityUser principal = (SecurityUser) auth.getPrincipal();
-        User user = userService.selectByOpenId(principal.getOpenId()).get();
+        User user = userService.selectByID(principal.getId()).get();
         user.setNickname(params.get("nickName" ).toString());
         user.setGender(Short.parseShort(params.get("gender" ).toString()));
         user.setLanguage(params.get("language" ).toString());
