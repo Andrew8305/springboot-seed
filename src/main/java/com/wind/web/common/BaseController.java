@@ -116,12 +116,11 @@ public class BaseController<T> {
                             .setCount(service.getCount(query))));
 
         } else {
-            return ResponseEntity.ok().build();
-//            return ResponseEntity
-//                    .ok(relatedResult(new PaginatedResult()
-//                            .setData(service.selectRelatedAll(type, value, table, page))
-//                            .setCurrentPage(page)
-//                            .setCount(service.getCount(type, value, table))));
+            return ResponseEntity
+                    .ok(relatedResult(new PaginatedResult()
+                            .setData(service.selectRelatedAll(table, page, query))
+                            .setCurrentPage(page)
+                            .setCount(service.getCount(table, query))));
         }
     }
 

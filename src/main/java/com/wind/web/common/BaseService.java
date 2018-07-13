@@ -142,6 +142,25 @@ public abstract class BaseService<T> {
     }
 
     /**
+     * 根据查询参数和页数获取实例列表（关联查询）
+     *
+     * @param table      关联表
+     * @param parameters 查询参数
+     * @param page       页数
+     * @return 实例列表
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> selectRelatedAll(String table, int page, QueryParameter... parameters) throws Exception {
+        Object relatedService = SpringUtil.getBean(table + "Service");
+        Method[] s = relatedService.getClass().getDeclaredMethods();
+        Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", QueryParameter[].class);
+        Object selectList = selectMethod.invoke(relatedService, new Object[]{parameters});
+        Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
+        List<Long> ids = (List<Long>) selectIdsMethod.invoke(relatedService, (List) selectList);
+        return selectAll(table + "Id", ids, page);
+    }
+
+    /**
      * 根据字段(字符型)和页数获取实例列表（关联查询）
      *
      * @param type  字段
@@ -284,6 +303,22 @@ public abstract class BaseService<T> {
         Object relatedService = SpringUtil.getBean(table + "Service");
         Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", String.class, String.class);
         Object selectList = selectMethod.invoke(relatedService, type, value);
+        Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
+        List<Long> ids = (List<Long>) selectIdsMethod.invoke(relatedService, selectList);
+        return getCount(table + "Id", ids);
+    }
+
+    /**
+     * 根据查询参数获取实例总数（关联查询）
+     *
+     * @param table      关联表
+     * @param parameters 查询参数
+     * @return 实例总数
+     */
+    public int getCount(String table, QueryParameter... parameters) throws Exception {
+        Object relatedService = SpringUtil.getBean(table + "Service");
+        Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", QueryParameter[].class);
+        Object selectList = selectMethod.invoke(relatedService, new Object[]{parameters});
         Method selectIdsMethod = relatedService.getClass().getDeclaredMethod("getIds", List.class);
         List<Long> ids = (List<Long>) selectIdsMethod.invoke(relatedService, selectList);
         return getCount(table + "Id", ids);
