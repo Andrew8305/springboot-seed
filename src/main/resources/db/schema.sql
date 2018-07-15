@@ -52,6 +52,7 @@ CREATE TABLE `user` (
   `sms_time` DATETIME DEFAULT NULL,
   `money` DECIMAL(6,2) DEFAULT 0,
   `points` smallint DEFAULT 0,
+  `vip_level` smallint DEFAULT 0,
   PRIMARY KEY (`id`)
 );
 ALTER TABLE `user` ADD UNIQUE (`username`);
@@ -102,12 +103,16 @@ CREATE TABLE `park` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT '',
   `address` varchar(200) DEFAULT '',
+  `province` varchar(200) DEFAULT '',
+  `city` varchar(200) DEFAULT '',
   `longitude` varchar(100) DEFAULT '',
   `latitude` varchar(100) DEFAULT '',
   `user_id` bigint(20) NOT NULL,
   `fee_id` bigint(20) NOT NULL,
   `parent` bigint(20) NULL,
-  `gates` varchar(100) DEFAULT '',
+  `gates` varchar(200) DEFAULT '',
+  `count` smallint DEFAULT 0,
+  `remaining_count` smallint DEFAULT 0,
   `comment` varchar(100) DEFAULT '',
   PRIMARY KEY (`id`)
 );

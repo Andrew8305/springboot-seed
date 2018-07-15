@@ -26,5 +26,8 @@
     <result column="avatar_url" property="avatarUrl" jdbcType="VARCHAR" />
     <result column="sms_code" property="smsCode" jdbcType="VARCHAR" />
     <result column="sms_time" property="smsTime" jdbcType="TIMESTAMP" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+    <result column="points" property="points" jdbcType="SMALLINT" />
+    <result column="vip_level" property="vipLevel" jdbcType="SMALLINT" />
   </resultMap>
 </mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wind.mybatis.mapper.CarFeeMapper" >
+  <resultMap id="BaseResultMap" type="com.wind.mybatis.pojo.CarFee" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="park_Id" property="parkId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="car_number" property="carNumber" jdbcType="VARCHAR" />
+    <result column="in_time" property="inTime" jdbcType="TIMESTAMP" />
+    <result column="out_time" property="outTime" jdbcType="TIMESTAMP" />
+    <result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+    <result column="payment_mode" property="paymentMode" jdbcType="VARCHAR" />
+    <result column="payment_id" property="paymentId" jdbcType="BIGINT" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

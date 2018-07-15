@@ -1,5 +1,6 @@
 package com.wind.mybatis.pojo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -55,6 +56,13 @@ public class User {
 
     @Column(name = "sms_time")
     private Date smsTime;
+
+    private BigDecimal money;
+
+    private Short points;
+
+    @Column(name = "vip_level")
+    private Short vipLevel;
 
     /**
      * @return id
@@ -348,5 +356,47 @@ public class User {
      */
     public void setSmsTime(Date smsTime) {
         this.smsTime = smsTime;
+    }
+
+    /**
+     * @return money
+     */
+    public BigDecimal getMoney() {
+        return money;
+    }
+
+    /**
+     * @param money
+     */
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
+    /**
+     * @return points
+     */
+    public Short getPoints() {
+        return points;
+    }
+
+    /**
+     * @param points
+     */
+    public void setPoints(Short points) {
+        this.points = points;
+    }
+
+    /**
+     * @return vip_level
+     */
+    public Short getVipLevel() {
+        return vipLevel;
+    }
+
+    /**
+     * @param vipLevel
+     */
+    public void setVipLevel(Short vipLevel) {
+        this.vipLevel = vipLevel;
     }
 }

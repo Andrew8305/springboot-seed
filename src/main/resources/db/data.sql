@@ -30,4 +30,11 @@ INSERT INTO `department` VALUES ('1', '1', 'hr', 'manager', 'hr manager');
 INSERT INTO `department` VALUES ('2', '2', 'research', 'developer', 'research developer');
 INSERT INTO `department` VALUES ('3', '3', 'research', 'developer', 'research developer');
 INSERT INTO `department` VALUES ('4', '3', 'management', 'CTO', 'CTO');
+
+INSERT INTO `park` (id, `name`, address, province, city, longitude, latitude, user_id, fee_id, `count`, remaining_count)
+  VALUES (1, '东源大厦地上停车场', '海淀区成府路35号', '北京', '北京', 116.337292, 39.993615, 1, 1, 200, 123);
+
+INSERT INTO `fee` (id, is_free, parameters, free_minutes, per_hour, limit_per_day)
+  VALUES (1, 0, 'free_minutes|per_hour|limit_per_day', 30, 2, 20);
+
 COMMIT;

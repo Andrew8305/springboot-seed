@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wind.mybatis.mapper.ParkMapper" >
+  <resultMap id="BaseResultMap" type="com.wind.mybatis.pojo.Park" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="fee_id" property="feeId" jdbcType="BIGINT" />
+    <result column="parent" property="parent" jdbcType="BIGINT" />
+    <result column="gates" property="gates" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="SMALLINT" />
+    <result column="remaining_count" property="remainingCount" jdbcType="SMALLINT" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CommonsLog
 @RestController
-@RequestMapping("/park")
-public class ParkController {
+@RequestMapping("/api/park")
+public class ParkAPI {
 
     @ApiOperation(value = "车辆待入场申请")
     @GetMapping("/car_in_pre")
