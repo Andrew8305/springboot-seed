@@ -22,8 +22,8 @@ import java.util.Objects;
 
 @CommonsLog
 @RestController
-@RequestMapping("/wechat/portal" )
-public class WxPortalController {
+@RequestMapping("/api/mini_app" )
+public class MiniAppAPI {
 
     @Autowired
     private UserService userService;

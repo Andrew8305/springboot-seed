@@ -12,8 +12,8 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http
-                .authorizeRequests().antMatchers("/h2/**", "/wechat/portal", "/static/**", "/druid/**").permitAll()
-                .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/park/**").permitAll()
+                .authorizeRequests().antMatchers("/h2/**", "/static/**", "/druid/**").permitAll()
+                .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }

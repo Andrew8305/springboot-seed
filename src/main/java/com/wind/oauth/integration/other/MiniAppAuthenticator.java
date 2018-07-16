@@ -2,8 +2,8 @@ package com.wind.oauth.integration.other;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
-import com.wind.common.Constant;
 import com.wind.common.SecurityUser;
+import com.wind.define.roleType;
 import com.wind.mybatis.pojo.User;
 import com.wind.oauth.integration.IntegrationAuthentication;
 import com.wind.oauth.integration.IntegrationAuthenticator;
@@ -60,7 +60,7 @@ public class MiniAppAuthenticator extends IntegrationAuthenticator {
             newUser.setSessionKey(sessionKey);
             newUser.setUnionId(unionId);
             newUser.setEnabled(true);
-            newUser.setRole(Constant.DEFAULT_ROLE);
+            newUser.setRole(roleType.user.toString());
             newUser.setPassword(passwordEncoder.encode(code));
             SecurityUser result = new SecurityUser(newUser);
             userService.add(newUser);
