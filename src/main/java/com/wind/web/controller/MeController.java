@@ -73,6 +73,18 @@ public class MeController {
         return carController.post(car);
     }
 
+    @ApiOperation(value = "取消绑定车牌")
+    @DeleteMapping("/remove_car")
+    public ResponseEntity<?> removeCar(@ApiParam("车牌号") @RequestParam("number") String number) {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = ((SecurityUser) auth.getPrincipal()).getId();
+        QueryParameter[] parameters = new QueryParameter[]{
+                new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG),
+                new QueryParameter("carNumber", QueryParameterMethod.EQUAL, number, QueryParameterType.STRING)
+        };
+         return carController.delete(parameters);
+    }
+
     @ApiOperation(value = "我的车牌列表")
     @GetMapping("/car_list")
     public ResponseEntity<?> car_list() throws Exception {

@@ -113,32 +113,10 @@ public abstract class BaseService<T> {
      * @return 实例列表
      */
     public List<T> selectAll(int page, QueryParameter... parameters) {
-        Example example = new Example(getActualClass());
-        example.setOrderByClause("id desc");
-        Example.Criteria criteria = example.createCriteria();
-        for (QueryParameter parameter : parameters) {
-            Object value = null;
-            switch (parameter.getValueType()) {
-                case LONG:
-                    value = Long.parseLong(parameter.getValue());
-                    break;
-                case STRING:
-                    value = parameter.getValue();
-                    break;
-            }
-            switch (parameter.getMethod()) {
-                case EQUAL:
-                    criteria.andEqualTo(parameter.getType(), value);
-                    break;
-                case LIKE:
-                    criteria.andLike(parameter.getType(), "%" + value + "%");
-                    break;
-            }
-        }
         if (page != ALL_PAGE) {
             PageHelper.startPage(page, Constant.PAGE_SIZE);
         }
-        return mapper.selectByExample(example);
+        return mapper.selectByExample(createExample(parameters));
     }
 
     /**
@@ -252,7 +230,13 @@ public abstract class BaseService<T> {
      * @return 实例总数
      */
     public int getCount(QueryParameter... parameters) {
+        int count = mapper.selectCountByExample(createExample(parameters));
+        return count;
+    }
+
+    public Example createExample(QueryParameter... parameters) {
         Example example = new Example(getActualClass());
+        example.setOrderByClause("id desc");
         Example.Criteria criteria = example.createCriteria();
         for (QueryParameter parameter : parameters) {
             Object value = null;
@@ -273,8 +257,7 @@ public abstract class BaseService<T> {
                     break;
             }
         }
-        int count = mapper.selectCountByExample(example);
-        return count;
+        return example;
     }
 
     /**
@@ -376,8 +359,8 @@ public abstract class BaseService<T> {
     }
 
     @Transactional
-    public boolean add(T T) {
-        return mapper.insertUseGeneratedKeys(T) > 0;
+    public boolean add(T t) {
+        return mapper.insertUseGeneratedKeys(t) > 0;
     }
 
     @Transactional
@@ -386,8 +369,8 @@ public abstract class BaseService<T> {
     }
 
     @Transactional
-    public boolean modifyById(T T) {
-        return mapper.updateByPrimaryKey(T) > 0;
+    public boolean modifyById(T t) {
+        return mapper.updateByPrimaryKey(t) > 0;
     }
 
     @Transactional
@@ -399,5 +382,10 @@ public abstract class BaseService<T> {
     public boolean deleteAll() {
         Example example = new Example(getActualClass());
         return mapper.deleteByExample(example) > 0;
+    }
+
+    @Transactional
+    public boolean delete(QueryParameter... parameters) {
+        return mapper.deleteByExample(createExample(parameters)) > 0;
     }
 }

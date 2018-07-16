@@ -138,14 +138,14 @@ public class BaseController<T> {
     @PostMapping
     public ResponseEntity<?> post(@RequestBody T instance) {
         service.add(instance);
-        return ResponseEntity.accepted().body(instance);
+        return ResponseEntity.ok().body(instance);
     }
 
     @ApiOperation(value = "新增多个实例")
     @PostMapping("/list")
     public ResponseEntity<?> post(@RequestBody List<T> list) {
         int count = service.add(list);
-        return ResponseEntity.accepted().body(count);
+        return ResponseEntity.ok().body(count);
     }
 
     @ApiOperation(value = "根据ID修改实例")
@@ -153,7 +153,7 @@ public class BaseController<T> {
     public ResponseEntity<?> put(@RequestBody T instance) {
         boolean result = service.modifyById(instance);
         if (result)
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(instance);
+            return ResponseEntity.ok().body(instance);
         else
             return ResponseEntity.notFound().build();
     }
@@ -163,7 +163,7 @@ public class BaseController<T> {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         boolean result = service.deleteById(id);
         if (result)
-            return ResponseEntity.accepted().build();
+            return ResponseEntity.ok().build();
         else
             return ResponseEntity.notFound().build();
     }
@@ -173,7 +173,18 @@ public class BaseController<T> {
     public ResponseEntity<?> deleteAll() {
         boolean result = service.deleteAll();
         if (result)
-            return ResponseEntity.accepted().build();
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.notFound().build();
+    }
+
+    @ApiOperation(value = "查询删除实例")
+    @DeleteMapping
+    public ResponseEntity<?> delete(
+            @RequestBody QueryParameter[] query) {
+        boolean result = service.delete(query);
+        if (result)
+            return ResponseEntity.ok().build();
         else
             return ResponseEntity.notFound().build();
     }
