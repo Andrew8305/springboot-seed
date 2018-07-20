@@ -87,7 +87,7 @@ CREATE TABLE `car_fee` (
   `user_id` bigint(20) DEFAULT NULL,
   `car_number` varchar(50) DEFAULT '',
   `in_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `out_time` timestamp DEFAULT NULL,
+  `out_time` DATETIME DEFAULT NULL,
   `payment_amount` DECIMAL(6,2) DEFAULT 0,
   `payment_mode` varchar(100) DEFAULT '',
   `payment_id` bigint(20) DEFAULT NULL,
@@ -113,6 +113,7 @@ CREATE TABLE `park` (
   `gates` varchar(200) DEFAULT '',
   `count` smallint DEFAULT 0,
   `remaining_count` smallint DEFAULT 0,
+  `is_member_only` tinyint(1) NOT NULL DEFAULT 0,
   `comment` varchar(100) DEFAULT '',
   PRIMARY KEY (`id`)
 );
@@ -161,7 +162,7 @@ CREATE TABLE `payment` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `amount` DECIMAL(6,2) DEFAULT 0,
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `pay_time` timestamp DEFAULT NULL,
+  `pay_time` DATETIME DEFAULT NULL,
   `comment` varchar(100) DEFAULT '',
   PRIMARY KEY (`id`)
 );

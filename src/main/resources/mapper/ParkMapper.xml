@@ -18,6 +18,7 @@
     <result column="gates" property="gates" jdbcType="VARCHAR" />
     <result column="count" property="count" jdbcType="SMALLINT" />
     <result column="remaining_count" property="remainingCount" jdbcType="SMALLINT" />
+    <result column="is_member_only" property="isMemberOnly" jdbcType="BIT" />
     <result column="comment" property="comment" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

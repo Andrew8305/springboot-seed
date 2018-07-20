@@ -33,6 +33,9 @@ public class Park {
     @Column(name = "remaining_count")
     private Short remainingCount;
 
+    @Column(name = "is_member_only")
+    private Boolean isMemberOnly;
+
     private String comment;
 
     /**
@@ -215,6 +218,20 @@ public class Park {
      */
     public void setRemainingCount(Short remainingCount) {
         this.remainingCount = remainingCount;
+    }
+
+    /**
+     * @return is_member_only
+     */
+    public Boolean getIsMemberOnly() {
+        return isMemberOnly;
+    }
+
+    /**
+     * @param isMemberOnly
+     */
+    public void setIsMemberOnly(Boolean isMemberOnly) {
+        this.isMemberOnly = isMemberOnly;
     }
 
     /**
