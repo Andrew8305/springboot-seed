@@ -18,11 +18,16 @@ public class CarFee {
     @Column(name = "car_number")
     private String carNumber;
 
+    private Integer code;
+
     @Column(name = "in_time")
     private Date inTime;
 
     @Column(name = "out_time")
     private Date outTime;
+
+    @Column(name = "payment_time")
+    private Date paymentTime;
 
     @Column(name = "payment_amount")
     private BigDecimal paymentAmount;
@@ -33,9 +38,40 @@ public class CarFee {
     @Column(name = "payment_id")
     private Long paymentId;
 
-    private String operator;
+    private BigDecimal cash;
 
-    private String comment;
+    @Column(name = "cash_type")
+    private Integer cashType;
+
+    @Column(name = "in_operation_type")
+    private Integer inOperationType;
+
+    @Column(name = "in_operator")
+    private String inOperator;
+
+    @Column(name = "in_image_url")
+    private String inImageUrl;
+
+    @Column(name = "in_gate")
+    private String inGate;
+
+    @Column(name = "in_comment")
+    private String inComment;
+
+    @Column(name = "out_operation_type")
+    private Integer outOperationType;
+
+    @Column(name = "out_operator")
+    private String outOperator;
+
+    @Column(name = "out_image_url")
+    private String outImageUrl;
+
+    @Column(name = "out_gate")
+    private String outGate;
+
+    @Column(name = "out_comment")
+    private String outComment;
 
     /**
      * @return id
@@ -94,6 +130,20 @@ public class CarFee {
     }
 
     /**
+     * @return code
+     */
+    public Integer getCode() {
+        return code;
+    }
+
+    /**
+     * @param code
+     */
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    /**
      * @return in_time
      */
     public Date getInTime() {
@@ -119,6 +169,20 @@ public class CarFee {
      */
     public void setOutTime(Date outTime) {
         this.outTime = outTime;
+    }
+
+    /**
+     * @return payment_time
+     */
+    public Date getPaymentTime() {
+        return paymentTime;
+    }
+
+    /**
+     * @param paymentTime
+     */
+    public void setPaymentTime(Date paymentTime) {
+        this.paymentTime = paymentTime;
     }
 
     /**
@@ -164,30 +228,170 @@ public class CarFee {
     }
 
     /**
-     * @return operator
+     * @return cash
      */
-    public String getOperator() {
-        return operator;
+    public BigDecimal getCash() {
+        return cash;
     }
 
     /**
-     * @param operator
+     * @param cash
      */
-    public void setOperator(String operator) {
-        this.operator = operator;
+    public void setCash(BigDecimal cash) {
+        this.cash = cash;
     }
 
     /**
-     * @return comment
+     * @return cash_type
      */
-    public String getComment() {
-        return comment;
+    public Integer getCashType() {
+        return cashType;
     }
 
     /**
-     * @param comment
+     * @param cashType
      */
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setCashType(Integer cashType) {
+        this.cashType = cashType;
+    }
+
+    /**
+     * @return in_operation_type
+     */
+    public Integer getInOperationType() {
+        return inOperationType;
+    }
+
+    /**
+     * @param inOperationType
+     */
+    public void setInOperationType(Integer inOperationType) {
+        this.inOperationType = inOperationType;
+    }
+
+    /**
+     * @return in_operator
+     */
+    public String getInOperator() {
+        return inOperator;
+    }
+
+    /**
+     * @param inOperator
+     */
+    public void setInOperator(String inOperator) {
+        this.inOperator = inOperator;
+    }
+
+    /**
+     * @return in_image_url
+     */
+    public String getInImageUrl() {
+        return inImageUrl;
+    }
+
+    /**
+     * @param inImageUrl
+     */
+    public void setInImageUrl(String inImageUrl) {
+        this.inImageUrl = inImageUrl;
+    }
+
+    /**
+     * @return in_gate
+     */
+    public String getInGate() {
+        return inGate;
+    }
+
+    /**
+     * @param inGate
+     */
+    public void setInGate(String inGate) {
+        this.inGate = inGate;
+    }
+
+    /**
+     * @return in_comment
+     */
+    public String getInComment() {
+        return inComment;
+    }
+
+    /**
+     * @param inComment
+     */
+    public void setInComment(String inComment) {
+        this.inComment = inComment;
+    }
+
+    /**
+     * @return out_operation_type
+     */
+    public Integer getOutOperationType() {
+        return outOperationType;
+    }
+
+    /**
+     * @param outOperationType
+     */
+    public void setOutOperationType(Integer outOperationType) {
+        this.outOperationType = outOperationType;
+    }
+
+    /**
+     * @return out_operator
+     */
+    public String getOutOperator() {
+        return outOperator;
+    }
+
+    /**
+     * @param outOperator
+     */
+    public void setOutOperator(String outOperator) {
+        this.outOperator = outOperator;
+    }
+
+    /**
+     * @return out_image_url
+     */
+    public String getOutImageUrl() {
+        return outImageUrl;
+    }
+
+    /**
+     * @param outImageUrl
+     */
+    public void setOutImageUrl(String outImageUrl) {
+        this.outImageUrl = outImageUrl;
+    }
+
+    /**
+     * @return out_gate
+     */
+    public String getOutGate() {
+        return outGate;
+    }
+
+    /**
+     * @param outGate
+     */
+    public void setOutGate(String outGate) {
+        this.outGate = outGate;
+    }
+
+    /**
+     * @return out_comment
+     */
+    public String getOutComment() {
+        return outComment;
+    }
+
+    /**
+     * @param outComment
+     */
+    public void setOutComment(String outComment) {
+        this.outComment = outComment;
     }
 }

@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.wind.common.Constant;
 import com.wind.common.SpringUtil;
 import com.wind.mybatis.CustomMapper;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -117,6 +118,17 @@ public abstract class BaseService<T> {
             PageHelper.startPage(page, Constant.PAGE_SIZE);
         }
         return mapper.selectByExample(createExample(parameters));
+    }
+
+    /**
+     * 根据查询参数和页数获取位置最前的多个实例
+     *
+     * @param count      数量
+     * @param parameters 查询参数
+     * @return 实例列表
+     */
+    public List<T> selectTop(int count, QueryParameter... parameters) {
+        return mapper.selectByExampleAndRowBounds(createExample(parameters), new RowBounds(0, count));
     }
 
     /**

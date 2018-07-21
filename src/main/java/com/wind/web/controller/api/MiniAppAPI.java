@@ -1,4 +1,4 @@
-package com.wind.web.api;
+package com.wind.web.controller.api;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaMessage;
