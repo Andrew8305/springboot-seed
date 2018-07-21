@@ -12,8 +12,8 @@ public class ParkMember {
     @Column(name = "park_id")
     private Long parkId;
 
-    @Column(name = "fee_id")
-    private Long feeId;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "car_number")
     private String carNumber;
@@ -66,17 +66,17 @@ public class ParkMember {
     }
 
     /**
-     * @return fee_id
+     * @return user_id
      */
-    public Long getFeeId() {
-        return feeId;
+    public Long getUserId() {
+        return userId;
     }
 
     /**
-     * @param feeId
+     * @param userId
      */
-    public void setFeeId(Long feeId) {
-        this.feeId = feeId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     /**

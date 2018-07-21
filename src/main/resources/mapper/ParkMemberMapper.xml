@@ -7,7 +7,7 @@
     -->
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="park_id" property="parkId" jdbcType="BIGINT" />
-    <result column="fee_id" property="feeId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="car_number" property="carNumber" jdbcType="VARCHAR" />
     <result column="start_date" property="startDate" jdbcType="TIMESTAMP" />
     <result column="end_date" property="endDate" jdbcType="TIMESTAMP" />
