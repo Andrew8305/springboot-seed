@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -259,6 +260,8 @@ public abstract class BaseService<T> {
                 case LONG:
                     value = Long.parseLong(parameter.getValue());
                     break;
+                case ARRAY:
+                    value = parameter.getValue().split(",");
             }
             switch (parameter.getMethod()) {
                 case LIKE:
@@ -267,6 +270,8 @@ public abstract class BaseService<T> {
                 case EQUAL:
                     criteria.andEqualTo(parameter.getType(), value);
                     break;
+                case IN:
+                    criteria.andIn(parameter.getType(), Arrays.asList((String[])value));
             }
         }
         return example;

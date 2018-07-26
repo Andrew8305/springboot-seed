@@ -52,7 +52,7 @@ public class BaseController<T> {
             if (name.length() > 2 && name.toLowerCase().endsWith("id")) {
                 if (name != "openId" && name != "unionId") {
                     // 获取ID列表
-                    Field idField = getActualClass().getDeclaredField(name);
+                    Field idField = type.getDeclaredField(name);
                     idField.setAccessible(true);
                     result.add(idField);
                 }

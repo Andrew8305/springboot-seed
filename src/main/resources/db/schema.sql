@@ -83,7 +83,7 @@ CREATE TABLE `car` (
 -- ----------------------------
 CREATE TABLE `car_fee` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `park_Id` bigint(20) NOT NULL,
+  `park_id` bigint(20) NOT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `car_number` varchar(50) DEFAULT '',
   `code` INT DEFAULT 0,

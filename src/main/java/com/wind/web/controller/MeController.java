@@ -11,6 +11,7 @@ import com.wind.mybatis.pojo.User;
 import com.wind.web.common.QueryParameter;
 import com.wind.web.common.QueryParameterMethod;
 import com.wind.web.common.QueryParameterType;
+import com.wind.web.service.CarService;
 import com.wind.web.service.DepartmentService;
 import com.wind.web.service.PermissionService;
 import com.wind.web.service.UserService;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import static com.wind.common.Constant.EMPTY_STRING;
+
 @RestController
 @RequestMapping("/me")
 public class MeController {
@@ -35,12 +38,16 @@ public class MeController {
     @Autowired
     private UserService userService;
     @Autowired
+    private CarService carService;
+    @Autowired
     private DepartmentService departmentService;
     @Autowired
     private PermissionService permissionService;
 
     @Autowired
     protected CarController carController;
+    @Autowired
+    protected CarFeeController carFeeController;
 
     @ApiOperation(value = "获取个人详情")
     @GetMapping("/info")
@@ -82,7 +89,7 @@ public class MeController {
                 new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG),
                 new QueryParameter("carNumber", QueryParameterMethod.EQUAL, number, QueryParameterType.STRING)
         };
-         return carController.delete(parameters);
+        return carController.delete(parameters);
     }
 
     @ApiOperation(value = "我的车牌列表")
@@ -93,7 +100,52 @@ public class MeController {
         QueryParameter[] parameters = new QueryParameter[]{
                 new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
         };
-        return carController.search(parameters, Constant.EMPTY_STRING, Constant.ALL_PAGE);
+        return carController.search(parameters, EMPTY_STRING, Constant.ALL_PAGE);
+    }
+
+    @ApiOperation(value = "我的已缴费记录列表")
+    @GetMapping("/car_fee_paid_list")
+    public ResponseEntity<?> car_fee_list(@ApiParam("车牌号") @RequestParam(name = "number", required = false, defaultValue = EMPTY_STRING) String number,
+                                          @ApiParam("停车场编号") @RequestParam(name = "parkId", required = false, defaultValue = "0") Long parkId,
+                                          @ApiParam("页数") @RequestParam("page") Integer page) throws Exception {
+        QueryParameter[] parameters;
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = ((SecurityUser) auth.getPrincipal()).getId();
+        if (number.equals(EMPTY_STRING) && parkId == 0) {
+            parameters = new QueryParameter[]{
+                    new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
+            };
+        } else if (number.equals(EMPTY_STRING)) {
+            parameters = new QueryParameter[]{
+                    new QueryParameter("parkId", QueryParameterMethod.EQUAL, parkId.toString(), QueryParameterType.LONG),
+                    new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
+            };
+        } else {
+            parameters = new QueryParameter[]{
+                    new QueryParameter("carNumber", QueryParameterMethod.EQUAL, number, QueryParameterType.STRING),
+                    new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
+            };
+        }
+        return carFeeController.search(parameters, EMPTY_STRING, page);
+    }
+
+    @ApiOperation(value = "我的未缴费记录列表")
+    @GetMapping("/car_fee_unpaid_list")
+    public ResponseEntity<?> car_fee_list(
+            @ApiParam("页数") @RequestParam("page") Integer page) throws Exception {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = ((SecurityUser) auth.getPrincipal()).getId();
+        List<Car> carList = carService.selectAll(page,
+                new QueryParameter[]{new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)});
+        String cars = EMPTY_STRING;
+        for (int i = 0; i < carList.size(); i++) {
+            cars += carList.get(i).getCarNumber();
+            if (i != carList.size() - 1)
+                cars += ",";
+        }
+        QueryParameter[] parameters = new QueryParameter[]{new QueryParameter("carNumber", QueryParameterMethod.IN, cars,
+                QueryParameterType.ARRAY)};
+        return carFeeController.search(parameters, EMPTY_STRING, page);
     }
 
     @ApiOperation(value = "修改密码")
