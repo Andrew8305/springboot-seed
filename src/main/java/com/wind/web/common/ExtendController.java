@@ -32,17 +32,21 @@ public class ExtendController<T> extends BaseController<T> {
             if (result.getDictionary().get(typeName) == null) {
                 List<Long> ids = new ArrayList<>();
                 for (Object o : list) {
-                    Long e = Long.parseLong(field.get(o).toString());
-                    if (!ids.contains(e)) {
-                        ids.add(e);
+                    if (field.get(o) != null) {
+                        Long e = Long.parseLong(field.get(o).toString());
+                        if (!ids.contains(e)) {
+                            ids.add(e);
+                        }
                     }
                 }
-                Object relatedService = SpringUtil.getBean(typeName + "Service");
-                // 获取ids查询方法
-                Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", List.class);
-                Object relatedResult = selectMethod.invoke(relatedService, ids);
-                result.getDictionary().put(typeName, relatedResult);
-                relatedFetch(result, (List)relatedResult);
+                if (ids.size() > 0) {
+                    Object relatedService = SpringUtil.getBean(typeName + "Service");
+                    // 获取ids查询方法
+                    Method selectMethod = relatedService.getClass().getDeclaredMethod("selectAll", List.class);
+                    Object relatedResult = selectMethod.invoke(relatedService, ids);
+                    result.getDictionary().put(typeName, relatedResult);
+                    relatedFetch(result, (List) relatedResult);
+                }
             }
         }
     }

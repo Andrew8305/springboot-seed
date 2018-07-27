@@ -1,23 +1,26 @@
-package com.wind.web.controller;
+package com.wind.web.controller.me;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.wind.common.Constant;
 import com.wind.common.SecurityUser;
+import com.wind.common.StringUnicodeSerializer;
 import com.wind.define.carType;
-import com.wind.mybatis.pojo.Car;
-import com.wind.mybatis.pojo.Department;
-import com.wind.mybatis.pojo.Permission;
-import com.wind.mybatis.pojo.User;
+import com.wind.mybatis.pojo.*;
 import com.wind.web.common.QueryParameter;
 import com.wind.web.common.QueryParameterMethod;
 import com.wind.web.common.QueryParameterType;
-import com.wind.web.service.CarService;
-import com.wind.web.service.DepartmentService;
-import com.wind.web.service.PermissionService;
-import com.wind.web.service.UserService;
+import com.wind.web.controller.CarController;
+import com.wind.web.controller.CarFeeController;
+import com.wind.web.service.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import org.codehaus.jackson.map.JsonSerializer;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +46,10 @@ public class MeController {
     private DepartmentService departmentService;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    protected CarFeeService carFeeService;
+    @Autowired
+    private ParkService parkService;
 
     @Autowired
     protected CarController carController;
@@ -104,10 +111,10 @@ public class MeController {
     }
 
     @ApiOperation(value = "我的已缴费记录列表")
-    @GetMapping("/car_fee_paid_list")
+    @GetMapping("/car_fee_paid_list/{page}")
     public ResponseEntity<?> car_fee_list(@ApiParam("车牌号") @RequestParam(name = "number", required = false, defaultValue = EMPTY_STRING) String number,
                                           @ApiParam("停车场编号") @RequestParam(name = "parkId", required = false, defaultValue = "0") Long parkId,
-                                          @ApiParam("页数") @RequestParam("page") Integer page) throws Exception {
+                                          @ApiParam("页数") @PathVariable("page") Integer page) throws Exception {
         QueryParameter[] parameters;
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = ((SecurityUser) auth.getPrincipal()).getId();
@@ -130,12 +137,12 @@ public class MeController {
     }
 
     @ApiOperation(value = "我的未缴费记录列表")
-    @GetMapping("/car_fee_unpaid_list")
+    @GetMapping("/car_fee_unpaid_list/{page}")
     public ResponseEntity<?> car_fee_list(
-            @ApiParam("页数") @RequestParam("page") Integer page) throws Exception {
+            @ApiParam("页数") @PathVariable("page") Integer page) throws Exception {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         Long currentUserId = ((SecurityUser) auth.getPrincipal()).getId();
-        List<Car> carList = carService.selectAll(page,
+        List<Car> carList = carService.selectAll(
                 new QueryParameter[]{new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)});
         String cars = EMPTY_STRING;
         for (int i = 0; i < carList.size(); i++) {
@@ -143,9 +150,47 @@ public class MeController {
             if (i != carList.size() - 1)
                 cars += ",";
         }
-        QueryParameter[] parameters = new QueryParameter[]{new QueryParameter("carNumber", QueryParameterMethod.IN, cars,
-                QueryParameterType.ARRAY)};
+        QueryParameter[] parameters = new QueryParameter[]{
+                new QueryParameter("carNumber", QueryParameterMethod.IN, cars, QueryParameterType.ARRAY),
+                new QueryParameter("userId", QueryParameterMethod.IS_NULL, EMPTY_STRING, QueryParameterType.STRING)};
         return carFeeController.search(parameters, EMPTY_STRING, page);
+    }
+
+    @ApiOperation(value = "最近一次停车记录")
+    @GetMapping(value = "/last_car_fee", produces = "application/json; charset=utf-8")
+    public ResponseEntity<?> car_fee_list() throws Exception {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        Long currentUserId = ((SecurityUser) auth.getPrincipal()).getId();
+        List<Car> carList = carService.selectAll(
+                new QueryParameter[]{new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)});
+        String cars = EMPTY_STRING;
+        for (int i = 0; i < carList.size(); i++) {
+            cars += carList.get(i).getCarNumber();
+            if (i != carList.size() - 1)
+                cars += ",";
+        }
+        QueryParameter[] parameters = new QueryParameter[]{
+                new QueryParameter("carNumber", QueryParameterMethod.IN, cars, QueryParameterType.ARRAY),
+                new QueryParameter("userId", QueryParameterMethod.IS_NULL, EMPTY_STRING, QueryParameterType.STRING)};
+        List<CarFee> carFeeList = carFeeService.selectTop(1, parameters);
+        if (carFeeList.size() != 1) {
+            parameters = new QueryParameter[]{
+                    new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
+            };
+            carFeeList = carFeeService.selectTop(1, parameters);
+        }
+        if (carFeeList.size() == 1) {
+            Park park = parkService.selectByID(carFeeList.get(0).getParkId()).get();
+            ObjectMapper mapper= new ObjectMapper();
+            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            SimpleModule module = new SimpleModule();
+            module.addSerializer(String.class, new StringUnicodeSerializer());
+            mapper.registerModule(module);
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            return ResponseEntity.status(HttpStatus.OK).header("park", mapper.writeValueAsString(park)).body(carFeeList.get(0));
+        } else {
+            return ResponseEntity.ok().build();
+        }
     }
 
     @ApiOperation(value = "修改密码")

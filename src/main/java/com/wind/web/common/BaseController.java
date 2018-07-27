@@ -4,7 +4,6 @@ import com.wind.common.PaginatedResult;
 import com.wind.exception.ResourceNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,7 +83,6 @@ public class BaseController<T> {
                             .setData(service.selectAll(page))
                             .setCurrentPage(page)
                             .setCount(service.getCount())));
-
         } else {
             if ("".equals(table)) {
                 return ResponseEntity
@@ -122,6 +120,18 @@ public class BaseController<T> {
                             .setCurrentPage(page)
                             .setCount(service.getCount(table, query))));
         }
+    }
+
+    @ApiOperation(value = "查询最新实例")
+    @PostMapping("/top/{number}")
+    public ResponseEntity<?> search(
+            @RequestBody QueryParameter[] query,
+            @PathVariable int number) throws Exception {
+        return ResponseEntity
+                .ok(relatedResult(new PaginatedResult()
+                        .setData(service.selectTop(number, query))
+                        .setCurrentPage(0)
+                        .setCount(number)));
     }
 
     @ApiOperation(value = "根据ID获取实例")

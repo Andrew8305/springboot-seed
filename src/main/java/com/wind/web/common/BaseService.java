@@ -262,6 +262,7 @@ public abstract class BaseService<T> {
                     break;
                 case ARRAY:
                     value = parameter.getValue().split(",");
+                    break;
             }
             switch (parameter.getMethod()) {
                 case LIKE:
@@ -272,6 +273,13 @@ public abstract class BaseService<T> {
                     break;
                 case IN:
                     criteria.andIn(parameter.getType(), Arrays.asList((String[])value));
+                    break;
+                case IS_NULL:
+                    criteria.andIsNull(parameter.getType());
+                    break;
+                case IS_NOT_NULL:
+                    criteria.andIsNotNull(parameter.getType());
+                    break;
             }
         }
         return example;

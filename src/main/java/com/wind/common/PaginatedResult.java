@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map;
 
 @Accessors(chain = true)
 @NoArgsConstructor

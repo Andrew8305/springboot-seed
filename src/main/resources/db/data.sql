@@ -17,7 +17,7 @@ INSERT INTO `user` (id, username, password) VALUES ('8', 'user6', '$2a$10$bTipog
 INSERT INTO `user` (id, username, password) VALUES ('9', 'user7', '$2a$10$bTipogXC0Wd4IlhQFuPkJ.sm0k0CTr4P80wPHcEBXeJ0wHdKSTBZy');
 INSERT INTO `user` (id, username, password) VALUES ('10', 'user8', '$2a$10$bTipogXC0Wd4IlhQFuPkJ.sm0k0CTr4P80wPHcEBXeJ0wHdKSTBZy');
 INSERT INTO `user` (id, username, password) VALUES ('11', 'user9', '$2a$10$bTipogXC0Wd4IlhQFuPkJ.sm0k0CTr4P80wPHcEBXeJ0wHdKSTBZy');
-INSERT INTO `user` (id, username, password) VALUES (12, 'user10', '$2a$10$bTipogXC0Wd4IlhQFuPkJ.sm0k0CTr4P80wPHcEBXeJ0wHdKSTBZy');
+INSERT INTO `user` (id, username, password) VALUES ('12', 'user10', '$2a$10$bTipogXC0Wd4IlhQFuPkJ.sm0k0CTr4P80wPHcEBXeJ0wHdKSTBZy');
 
 INSERT INTO `permission` VALUES ('1', '1', 'user', 'edit', 'edit');
 INSERT INTO `permission` VALUES ('2', '1', '*', 'query', 'edit');
@@ -41,5 +41,18 @@ INSERT INTO `fee` (id, is_free, parameters, free_minutes, per_hour, limit_per_da
 
 INSERT INTO `fee` (id, is_free, parameters, free_minutes, per_hour, limit_per_day)
   VALUES (2, 0, 'per_hour|limit_per_day', 15, 3, 40);
+
+
+INSERT INTO `car_fee` (id, park_id, user_id, car_number)
+  VALUES (1, 1, null, '1111111');
+
+INSERT INTO `car_fee` (id, park_id, user_id, car_number)
+  VALUES (2, 2, null, '1111111');
+
+INSERT INTO `car_fee` (id, park_id, user_id, car_number, out_time, payment_amount)
+  VALUES (3, 1, 13, '1111111', '2018-07-27 12:00:00', 4);
+
+INSERT INTO `car_fee` (id, park_id, user_id, car_number, out_time, payment_amount)
+  VALUES (4, 1, 13, '1111111', '2018-07-27 14:30:00', 7);
 
 COMMIT;
