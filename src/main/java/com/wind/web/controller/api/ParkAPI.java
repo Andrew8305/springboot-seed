@@ -38,7 +38,7 @@ public class ParkAPI {
     FeeService feeService;
 
     @ApiOperation(value = "车辆待入场申请")
-    @GetMapping("/car_in_pre")
+    @GetMapping(value = "/car_in_pre", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<?> carInPre(
             @RequestParam("parkId") Long parkId,
             @RequestParam("car") String carNumber) {
@@ -90,7 +90,7 @@ public class ParkAPI {
     }
 
     @ApiOperation(value = "车辆已入场通知")
-    @GetMapping("/car_in_post")
+    @GetMapping(value = "/car_in_post", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<?> carInPost(
             @RequestParam("parkId") Long parkId,
             @RequestParam("recId") Long recId,
@@ -128,7 +128,7 @@ public class ParkAPI {
     }
 
     @ApiOperation(value = "车辆待出场申请")
-    @GetMapping("/car_out_pre")
+    @GetMapping(value ="/car_out_pre", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<?> carOutPre(
             @RequestParam("parkId") Long parkId,
             @RequestParam("car") String carNumber) {
@@ -258,7 +258,7 @@ public class ParkAPI {
     }
 
     @ApiOperation(value = "车辆已出场通知")
-    @GetMapping("/car_out_post")
+    @GetMapping(value = "/car_out_post", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<?> carOutPost(
             @RequestParam("parkId") Long parkId,
             @RequestParam("recId") Long recId,
@@ -288,17 +288,19 @@ public class ParkAPI {
                 fee.setOutGate(gate);
                 fee.setCash(new BigDecimal(inCash).divide(new BigDecimal(100)));
                 fee.setPaymentTime(new Date());
-                fee.setCashType(feeType);
-                if (feeType == 1 && inCash > 0) { // 续租收现
-                    ParkMember member = new ParkMember();
-                    member.setCarNumber(carNumber);
-                    member.setParkId(parkId);
-                    member.setOperator(optUser);
-                    member.setComment("停车场手动续租");
-                    member.setStartDate(new Date(sTime * 1000 * 24 * 3600));
-                    member.setEndDate(new Date(eTime * 1000 * 24 * 3600));
-                    member.setPaymentAmount(fee.getCash());
-                    parkMemberService.add(member);
+                if (inCash > 0) {
+                    fee.setCashType(feeType);
+                    if (feeType == 1) { // 续租收现
+                        ParkMember member = new ParkMember();
+                        member.setCarNumber(carNumber);
+                        member.setParkId(parkId);
+                        member.setOperator(optUser);
+                        member.setComment("停车场手动续租");
+                        member.setStartDate(new Date(sTime * 1000 * 24 * 3600));
+                        member.setEndDate(new Date(eTime * 1000 * 24 * 3600));
+                        member.setPaymentAmount(fee.getCash());
+                        parkMemberService.add(member);
+                    }
                 }
                 carFeeService.modifyById(fee);
                 code = 0;
