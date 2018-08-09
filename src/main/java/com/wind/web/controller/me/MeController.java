@@ -195,23 +195,20 @@ public class MeController {
 
     @ApiOperation(value = "修改密码")
     @PutMapping("/change_password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordForm form) {
+    public ResponseEntity<?> changePassword(
+            @ApiParam("旧密码") @RequestParam("oldPassword") String oldPassword,
+            @ApiParam("新密码") @RequestParam("newPassword") String newPassword
+    ) {
         OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
         Optional<User> user = userService.selectByID(((SecurityUser) auth.getPrincipal()).getId());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (user.isPresent() && encoder.matches(form.oldPassword, user.get().getPassword())) {
+        if (user.isPresent() && encoder.matches(oldPassword, user.get().getPassword())) {
             User instance = user.get();
-            instance.setPassword(form.newPassword);
+            instance.setPassword(newPassword);
             userService.modifyById(instance);
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-    }
-
-    @Data
-    static class ChangePasswordForm {
-        private String oldPassword;
-        private String newPassword;
     }
 }
