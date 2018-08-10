@@ -11,7 +11,7 @@ import cn.binarywang.wx.miniapp.message.WxMaMessageRouter;
 import com.google.common.collect.Lists;
 import lombok.extern.apachecommons.CommonsLog;
 import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

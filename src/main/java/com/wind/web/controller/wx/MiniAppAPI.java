@@ -1,4 +1,4 @@
-package com.wind.web.controller.api;
+package com.wind.web.controller.wx;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaMessage;
@@ -22,7 +22,7 @@ import java.util.Objects;
 
 @CommonsLog
 @RestController
-@RequestMapping("/api/mini_app" )
+@RequestMapping("/wx/ma" )
 public class MiniAppAPI {
 
     @Autowired

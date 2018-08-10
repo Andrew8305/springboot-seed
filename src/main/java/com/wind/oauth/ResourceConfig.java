@@ -13,7 +13,7 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
         http.headers().frameOptions().disable();
         http
                 .authorizeRequests().antMatchers("/h2/**", "/static/**", "/druid/**").permitAll()
-                .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**").permitAll()
+                .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**", "/wx/**").permitAll()
                 .anyRequest().authenticated()
                 .and().csrf().disable();
     }

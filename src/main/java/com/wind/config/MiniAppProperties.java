@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties(prefix = "wechat.miniapp")
+@ConfigurationProperties(prefix = "wx.ma")
 public class MiniAppProperties {
     /**
      * 设置微信小程序的appid

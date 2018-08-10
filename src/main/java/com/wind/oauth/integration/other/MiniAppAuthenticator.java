@@ -9,7 +9,7 @@ import com.wind.oauth.integration.IntegrationAuthentication;
 import com.wind.oauth.integration.IntegrationAuthenticator;
 import com.wind.web.service.UserService;
 import lombok.extern.apachecommons.CommonsLog;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.crypto.password.PasswordEncoder;
