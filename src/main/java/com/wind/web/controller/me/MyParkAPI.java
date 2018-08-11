@@ -4,76 +4,68 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.wind.common.Constant;
 import com.wind.common.SecurityUser;
 import com.wind.common.StringUnicodeSerializer;
+import com.wind.config.WxPayProperties;
 import com.wind.define.carType;
-import com.wind.mybatis.pojo.*;
+import com.wind.mybatis.pojo.Car;
+import com.wind.mybatis.pojo.CarFee;
+import com.wind.mybatis.pojo.Fee;
+import com.wind.mybatis.pojo.Park;
 import com.wind.web.common.QueryParameter;
 import com.wind.web.common.QueryParameterMethod;
 import com.wind.web.common.QueryParameterType;
-import com.wind.web.controller.CarController;
-import com.wind.web.controller.CarFeeController;
-import com.wind.web.service.*;
+import com.wind.web.controller.rest.CarRest;
+import com.wind.web.controller.rest.CarFeeRest;
+import com.wind.web.controller.third.ParkThirdAPI;
+import com.wind.web.controller.wx.WxPayAPI;
+import com.wind.web.service.CarFeeService;
+import com.wind.web.service.CarService;
+import com.wind.web.service.FeeService;
+import com.wind.web.service.ParkService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.Data;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.ser.CustomSerializerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.*;
 
 import static com.wind.common.Constant.EMPTY_STRING;
 
 @RestController
-@RequestMapping("/me")
-public class MeController {
-
+@EnableConfigurationProperties(WxPayProperties.class)
+@RequestMapping("/me/park")
+public class MyParkAPI {
     @Autowired
-    private UserService userService;
+    private WxPayProperties wxPayProperties;
+
     @Autowired
     private CarService carService;
     @Autowired
-    private DepartmentService departmentService;
-    @Autowired
-    private PermissionService permissionService;
-    @Autowired
     protected CarFeeService carFeeService;
+    @Autowired
+    protected FeeService feeService;
     @Autowired
     private ParkService parkService;
 
     @Autowired
-    protected CarController carController;
+    protected CarRest carRest;
     @Autowired
-    protected CarFeeController carFeeController;
-
-    @ApiOperation(value = "获取个人详情")
-    @GetMapping("/info")
-    public ResponseEntity<?> getInfo() throws Exception {
-        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser principal = (SecurityUser) auth.getPrincipal();
-        ObjectMapper mapper = new ObjectMapper();
-        if (principal.getId() != null) {
-            User user = userService.selectByID(principal.getId()).get();
-            List<Department> departments = departmentService.selectAllByUserId(user.getId());
-            List<Permission> permissions = permissionService.selectAllByUserId(user.getId());
-            return ResponseEntity.status(HttpStatus.OK)
-                    .header("permissions", mapper.writeValueAsString(permissions))
-                    .header("departments", mapper.writeValueAsString(departments))
-                    .body(user);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-        }
-    }
+    protected CarFeeRest carFeeRest;
+    @Autowired
+    protected WxPayAPI wxPayAPI;
 
     @ApiOperation(value = "绑定车牌")
     @PostMapping("/add_car")
@@ -84,7 +76,7 @@ public class MeController {
         car.setUserId(currentUserId);
         car.setCarNumber(number);
         car.setCarType(number.length() == 7 ? carType.MOTOR_VEHICLE.toString() : carType.ELECTRIC_VEHICLE.toString());
-        return carController.post(car);
+        return carRest.post(car);
     }
 
     @ApiOperation(value = "取消绑定车牌")
@@ -96,7 +88,7 @@ public class MeController {
                 new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG),
                 new QueryParameter("carNumber", QueryParameterMethod.EQUAL, number, QueryParameterType.STRING)
         };
-        return carController.delete(parameters);
+        return carRest.delete(parameters);
     }
 
     @ApiOperation(value = "我的车牌列表")
@@ -107,7 +99,47 @@ public class MeController {
         QueryParameter[] parameters = new QueryParameter[]{
                 new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
         };
-        return carController.search(parameters, EMPTY_STRING, Constant.ALL_PAGE);
+        return carRest.search(parameters, EMPTY_STRING, Constant.ALL_PAGE);
+    }
+
+    @ApiOperation(value = "支付停车费")
+    @PostMapping("/pay")
+    public ResponseEntity<?> pay(HttpServletRequest httpRequest,
+                                 @ApiParam("停车记录") @RequestParam("carFee") Long carFeeId) throws Exception {
+        CarFee carFee = carFeeService.selectByID(carFeeId).get();
+        Park park = parkService.selectByID(carFee.getParkId()).get();
+        Fee fee = feeService.selectByID(park.getFeeId()).get();
+        BigDecimal money = ParkThirdAPI.calculateMoney(fee, carFee.getInTime(), new Date());
+        money = money.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN).add(BigDecimal.ONE);
+        Dictionary<String, String> map = new Hashtable<>();
+        if (money == BigDecimal.ZERO) {
+            map.put("money", "0");
+        } else {
+            OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+            WxPayUnifiedOrderRequest request = new WxPayUnifiedOrderRequest();
+            request.setOpenid(((SecurityUser) auth.getPrincipal()).getOpenId());
+            request.setDeviceInfo("ma");
+            request.setBody(park.getName());
+            request.setDetail(park.getName() + "-停车费");
+            request.setOutTradeNo(Long.toString(new Date().getTime()) + '-' + new Random().nextInt(1000) + '-' + fee.getId().toString());
+            request.setFeeType("CNY");
+            request.setTotalFee(money.intValue());
+            request.setSpbillCreateIp(httpRequest.getLocalAddr());
+            request.setNotifyUrl("https://app.lhzh.tech/wx/pay/parseOrderNotifyResult");
+            request.setTradeType("JSAPI");
+            WxPayUnifiedOrderResult result = wxPayAPI.unifiedOrder(request);
+            map.put("nonceStr", result.getNonceStr());
+            String timeStamp = Long.toString(new Date().getTime() / 1000);
+            map.put("timeStamp", timeStamp);
+            String pkg = "prepay_id=" + result.getPrepayId();
+            map.put("package", pkg);
+            map.put("signType", "MD5");
+            String paySignString = String.format("appId=%s&nonceStr=%s&package=%s&signType=MD5&timeStamp=%s&key=%s",
+                    wxPayProperties.getAppId(), result.getNonceStr(), pkg, timeStamp, wxPayProperties.getMchKey());
+            String paySign = new BigInteger(1, MessageDigest.getInstance("MD5").digest(paySignString.getBytes())).toString(16);
+            map.put("paySign", paySign);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(map);
     }
 
     @ApiOperation(value = "我的已缴费记录列表")
@@ -133,7 +165,7 @@ public class MeController {
                     new QueryParameter("userId", QueryParameterMethod.EQUAL, currentUserId.toString(), QueryParameterType.LONG)
             };
         }
-        return carFeeController.search(parameters, EMPTY_STRING, page);
+        return carFeeRest.search(parameters, EMPTY_STRING, page);
     }
 
     @ApiOperation(value = "我的未缴费记录列表")
@@ -153,7 +185,7 @@ public class MeController {
         QueryParameter[] parameters = new QueryParameter[]{
                 new QueryParameter("carNumber", QueryParameterMethod.IN, cars, QueryParameterType.ARRAY),
                 new QueryParameter("userId", QueryParameterMethod.IS_NULL, EMPTY_STRING, QueryParameterType.STRING)};
-        return carFeeController.search(parameters, EMPTY_STRING, page);
+        return carFeeRest.search(parameters, EMPTY_STRING, page);
     }
 
     @ApiOperation(value = "最近一次停车记录")
@@ -181,7 +213,7 @@ public class MeController {
         }
         if (carFeeList.size() == 1) {
             Park park = parkService.selectByID(carFeeList.get(0).getParkId()).get();
-            ObjectMapper mapper= new ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
             mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             SimpleModule module = new SimpleModule();
             module.addSerializer(String.class, new StringUnicodeSerializer());
@@ -190,25 +222,6 @@ public class MeController {
             return ResponseEntity.status(HttpStatus.OK).header("park", mapper.writeValueAsString(park)).body(carFeeList.get(0));
         } else {
             return ResponseEntity.ok().build();
-        }
-    }
-
-    @ApiOperation(value = "修改密码")
-    @PutMapping("/change_password")
-    public ResponseEntity<?> changePassword(
-            @ApiParam("旧密码") @RequestParam("oldPassword") String oldPassword,
-            @ApiParam("新密码") @RequestParam("newPassword") String newPassword
-    ) {
-        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> user = userService.selectByID(((SecurityUser) auth.getPrincipal()).getId());
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (user.isPresent() && encoder.matches(oldPassword, user.get().getPassword())) {
-            User instance = user.get();
-            instance.setPassword(newPassword);
-            userService.modifyById(instance);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

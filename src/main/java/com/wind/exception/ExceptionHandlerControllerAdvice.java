@@ -56,9 +56,7 @@ class ExceptionHandlerControllerAdvice {
     }
 
     private void logError(HttpServletRequest request, Exception e) {
-        log.error("[URI: " + request.getRequestURI() + "]"
-                + "[error: " + e.getMessage() + "]");
-        e.printStackTrace();
+        log.error("[URI: " + request.getRequestURI() + "]", e);
     }
 
 }

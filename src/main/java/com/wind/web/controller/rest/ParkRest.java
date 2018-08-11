@@ -1,11 +1,11 @@
-package com.wind.web.controller;
+package com.wind.web.controller.rest;
 
-import com.wind.mybatis.pojo.Department;
+import com.wind.mybatis.pojo.Park;
 import com.wind.web.common.ExtendController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/department")
-public class DepartmentController extends ExtendController<Department>{
+@RequestMapping("/rest/park")
+public class ParkRest extends ExtendController<Park> {
 }

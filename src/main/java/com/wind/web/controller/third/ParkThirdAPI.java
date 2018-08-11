@@ -1,4 +1,4 @@
-package com.wind.web.controller.api;
+package com.wind.web.controller.third;
 
 import com.wind.mybatis.pojo.*;
 import com.wind.web.common.QueryParameter;
@@ -22,8 +22,8 @@ import static com.wind.common.Constant.EMPTY_STRING;
 
 @CommonsLog
 @RestController
-@RequestMapping("/api/park")
-public class ParkAPI {
+@RequestMapping("/third/park")
+public class ParkThirdAPI {
 
     @Autowired
     ParkMemberService parkMemberService;

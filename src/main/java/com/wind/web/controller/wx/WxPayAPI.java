@@ -49,18 +49,18 @@ import com.github.binarywang.wxpay.service.WxPayService;
 
 @RestController
 @RequestMapping("/wx/pay")
-public class Pay {
+public class WxPayAPI {
 
     private WxPayService wxService;
 
     @Autowired
-    public Pay(WxPayService wxService) {
+    public WxPayAPI(WxPayService wxService) {
         this.wxService = wxService;
     }
 
     /**
      * <pre>
-     * 查询订单(详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2)
+     * 查询订单(详见https://pay.weixin.qq.com/wiki/doc/third/jsapi.php?chapter=9_2)
      * 该接口提供所有微信支付订单的查询，商户可以通过查询订单接口主动查询订单状态，完成下一步的业务逻辑。
      * 需要调用查询接口的情况：
      * ◆ 当商户后台、网络、服务器等出现异常，商户系统最终未接收到支付通知；
@@ -120,7 +120,7 @@ public class Pay {
     }
 
     /**
-     * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)
+     * 统一下单(详见https://pay.weixin.qq.com/wiki/doc/third/jsapi.php?chapter=9_1)
      * 在发起微信支付前，需要调用统一下单接口，获取"预支付交易会话标识"
      * 接口地址：https://api.mch.weixin.qq.com/pay/unifiedorder
      *

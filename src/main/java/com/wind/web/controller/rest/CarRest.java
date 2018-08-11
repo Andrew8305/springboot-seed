@@ -1,11 +1,11 @@
-package com.wind.web.controller;
+package com.wind.web.controller.rest;
 
-import com.wind.mybatis.pojo.Fee;
+import com.wind.mybatis.pojo.Car;
 import com.wind.web.common.ExtendController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/fee")
-public class FeeController extends ExtendController<Fee> {
+@RequestMapping("/rest/car")
+public class CarRest extends ExtendController<Car> {
 }

@@ -1,5 +1,6 @@
 package com.wind.oauth;
 
+import com.wind.define.roleType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -12,9 +13,11 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http
-                .authorizeRequests().antMatchers("/h2/**", "/static/**", "/druid/**").permitAll()
-                .antMatchers("/swagger**", "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**", "/wx/**").permitAll()
-                .anyRequest().authenticated()
+                .authorizeRequests().antMatchers("/me/**")
+                .hasAnyAuthority(roleType.user.toString(), roleType.admin.toString(), roleType.root.toString())
+                .antMatchers("/rest/**")
+                .hasAnyAuthority(roleType.admin.toString(), roleType.root.toString())
+                .anyRequest().permitAll()
                 .and().csrf().disable();
     }
 }

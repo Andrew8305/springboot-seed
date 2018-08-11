@@ -1,4 +1,4 @@
-package com.wind.web.controller;
+package com.wind.web.controller.rest;
 
 import com.wind.web.common.ExtendController;
 import com.wind.mybatis.pojo.*;
@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/permission")
-public class PermissionController extends ExtendController<Permission> {
+@RequestMapping("/rest/permission")
+public class PermissionRest extends ExtendController<Permission> {
 }
