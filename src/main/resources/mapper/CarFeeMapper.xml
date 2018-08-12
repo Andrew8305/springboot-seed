@@ -12,12 +12,10 @@
     <result column="code" property="code" jdbcType="INTEGER" />
     <result column="in_time" property="inTime" jdbcType="TIMESTAMP" />
     <result column="out_time" property="outTime" jdbcType="TIMESTAMP" />
+    <result column="payment_id" property="paymentId" jdbcType="BIGINT" />
     <result column="payment_time" property="paymentTime" jdbcType="TIMESTAMP" />
     <result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
     <result column="payment_mode" property="paymentMode" jdbcType="VARCHAR" />
-    <result column="payment_id" property="paymentId" jdbcType="BIGINT" />
-    <result column="cash" property="cash" jdbcType="DECIMAL" />
-    <result column="cash_type" property="cashType" jdbcType="INTEGER" />
     <result column="in_operation_type" property="inOperationType" jdbcType="INTEGER" />
     <result column="in_operator" property="inOperator" jdbcType="VARCHAR" />
     <result column="in_image_url" property="inImageUrl" jdbcType="VARCHAR" />

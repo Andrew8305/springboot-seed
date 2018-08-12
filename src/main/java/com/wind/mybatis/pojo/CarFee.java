@@ -9,7 +9,7 @@ public class CarFee {
     @Id
     private Long id;
 
-    @Column(name = "park_Id")
+    @Column(name = "park_id")
     private Long parkId;
 
     @Column(name = "user_id")
@@ -26,6 +26,9 @@ public class CarFee {
     @Column(name = "out_time")
     private Date outTime;
 
+    @Column(name = "payment_id")
+    private Long paymentId;
+
     @Column(name = "payment_time")
     private Date paymentTime;
 
@@ -34,14 +37,6 @@ public class CarFee {
 
     @Column(name = "payment_mode")
     private String paymentMode;
-
-    @Column(name = "payment_id")
-    private Long paymentId;
-
-    private BigDecimal cash;
-
-    @Column(name = "cash_type")
-    private Integer cashType;
 
     @Column(name = "in_operation_type")
     private Integer inOperationType;
@@ -88,7 +83,7 @@ public class CarFee {
     }
 
     /**
-     * @return park_Id
+     * @return park_id
      */
     public Long getParkId() {
         return parkId;
@@ -172,6 +167,20 @@ public class CarFee {
     }
 
     /**
+     * @return payment_id
+     */
+    public Long getPaymentId() {
+        return paymentId;
+    }
+
+    /**
+     * @param paymentId
+     */
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
+    }
+
+    /**
      * @return payment_time
      */
     public Date getPaymentTime() {
@@ -211,48 +220,6 @@ public class CarFee {
      */
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
-    }
-
-    /**
-     * @return payment_id
-     */
-    public Long getPaymentId() {
-        return paymentId;
-    }
-
-    /**
-     * @param paymentId
-     */
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
-    }
-
-    /**
-     * @return cash
-     */
-    public BigDecimal getCash() {
-        return cash;
-    }
-
-    /**
-     * @param cash
-     */
-    public void setCash(BigDecimal cash) {
-        this.cash = cash;
-    }
-
-    /**
-     * @return cash_type
-     */
-    public Integer getCashType() {
-        return cashType;
-    }
-
-    /**
-     * @param cashType
-     */
-    public void setCashType(Integer cashType) {
-        this.cashType = cashType;
     }
 
     /**

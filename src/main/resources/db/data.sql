@@ -49,10 +49,10 @@ INSERT INTO `car_fee` (id, park_id, user_id, car_number)
 INSERT INTO `car_fee` (id, park_id, user_id, car_number)
   VALUES (2, 2, null, '1111111');
 
-INSERT INTO `car_fee` (id, park_id, user_id, car_number, out_time, payment_amount)
+INSERT INTO `car_fee` (id, park_id, user_id, car_number, payment_time, payment_amount)
   VALUES (3, 1, 13, '1111111', '2018-07-27 12:00:00', 4);
 
-INSERT INTO `car_fee` (id, park_id, user_id, car_number, out_time, payment_amount)
+INSERT INTO `car_fee` (id, park_id, user_id, car_number, payment_time, payment_amount)
   VALUES (4, 1, 13, '1111111', '2018-07-27 14:30:00', 7);
 
 COMMIT;

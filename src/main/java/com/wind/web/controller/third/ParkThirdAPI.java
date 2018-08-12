@@ -1,19 +1,20 @@
 package com.wind.web.controller.third;
 
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wind.mybatis.pojo.*;
 import com.wind.web.common.QueryParameter;
 import com.wind.web.common.QueryParameterMethod;
 import com.wind.web.common.QueryParameterType;
+import com.wind.web.controller.wx.WxPayAPI;
 import com.wind.web.service.*;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -36,6 +37,44 @@ public class ParkThirdAPI {
 
     @Autowired
     FeeService feeService;
+
+    @Autowired
+    protected WxPayAPI wxPayAPI;
+
+    @Autowired
+    private PaymentService paymentService;
+
+    @PostMapping("/pay_callback/{type}/{id}/{rid}/{uid}")
+    public ResponseEntity<?> parseOrderNotifyResult(@ApiParam("支付类型") @PathVariable("type") Integer type,
+                                                    @ApiParam("主键") @PathVariable("id") long id,
+                                                    @ApiParam("外键") @PathVariable("rid") long rid,
+                                                    @ApiParam("用户id") @PathVariable("uid") long uid,
+                                                    @RequestBody String xmlData) throws WxPayException {
+        WxPayOrderNotifyResult result = wxPayAPI.parseOrderNotifyResult(xmlData);
+        if (result.getReturnCode().equals("SUCCESS")) {
+        if (type == 1) {
+            Payment payment = paymentService.selectByID(id).get();
+            payment.setBankType(result.getBankType());
+            payment.setOutTradeNo(result.getOutTradeNo());
+            payment.setTransactionNo(result.getTransactionId());
+            payment.setComment(result.getReturnCode());
+            paymentService.modifyById(payment);
+            CarFee carFee = carFeeService.selectByID(rid).get();
+            carFee.setPaymentAmount(new BigDecimal(payment.getTotalFee()).divide(new BigDecimal(100)));
+            carFee.setPaymentTime(new Date());
+            carFee.setPaymentMode("微信支付");
+            carFee.setPaymentId(id);
+            carFee.setUserId(uid);
+            carFeeService.modifyById(carFee);
+        } else {
+            // todo: 会员充值
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("SUCCESS");
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body("FAIL");
+        }
+    }
+
 
     @ApiOperation(value = "车辆待入场申请")
     @GetMapping(value = "/car_in_pre", produces = "text/plain;charset=UTF-8")
@@ -286,10 +325,8 @@ public class ParkThirdAPI {
                 fee.setOutOperator(optUser);
                 fee.setOutImageUrl(imgUrl);
                 fee.setOutGate(gate);
-                fee.setCash(new BigDecimal(inCash).divide(new BigDecimal(100)));
                 fee.setPaymentTime(new Date());
                 if (inCash > 0) {
-                    fee.setCashType(feeType);
                     if (feeType == 1) { // 续租收现
                         ParkMember member = new ParkMember();
                         member.setCarNumber(carNumber);
@@ -298,8 +335,15 @@ public class ParkThirdAPI {
                         member.setComment("停车场手动续租");
                         member.setStartDate(new Date(sTime * 1000 * 24 * 3600));
                         member.setEndDate(new Date(eTime * 1000 * 24 * 3600));
-                        member.setPaymentAmount(fee.getCash());
+                        member.setPaymentAmount(new BigDecimal(inCash).divide(new BigDecimal(100)));
+                        member.setPaymentTime(new Date());
+                        member.setPaymentMode("cash");
                         parkMemberService.add(member);
+                        fee.setPaymentAmount(BigDecimal.ZERO);
+                        fee.setPaymentMode("续租");
+                    } else {
+                        fee.setPaymentAmount(new BigDecimal(inCash).divide(new BigDecimal(100)));
+                        fee.setPaymentMode("现金");
                     }
                 }
                 carFeeService.modifyById(fee);

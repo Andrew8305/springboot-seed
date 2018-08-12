@@ -30,6 +30,9 @@ public class ParkMember {
     @Column(name = "payment_mode")
     private String paymentMode;
 
+    @Column(name = "payment_time")
+    private Date paymentTime;
+
     @Column(name = "payment_id")
     private Long paymentId;
 
@@ -147,6 +150,20 @@ public class ParkMember {
      */
     public void setPaymentMode(String paymentMode) {
         this.paymentMode = paymentMode;
+    }
+
+    /**
+     * @return payment_time
+     */
+    public Date getPaymentTime() {
+        return paymentTime;
+    }
+
+    /**
+     * @param paymentTime
+     */
+    public void setPaymentTime(Date paymentTime) {
+        this.paymentTime = paymentTime;
     }
 
     /**

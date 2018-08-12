@@ -4,17 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
+import com.github.binarywang.wxpay.exception.WxPayException;
 import com.wind.common.Constant;
 import com.wind.common.SecurityUser;
 import com.wind.common.StringUnicodeSerializer;
 import com.wind.config.WxPayProperties;
 import com.wind.define.carType;
-import com.wind.mybatis.pojo.Car;
-import com.wind.mybatis.pojo.CarFee;
-import com.wind.mybatis.pojo.Fee;
-import com.wind.mybatis.pojo.Park;
+import com.wind.mybatis.pojo.*;
 import com.wind.web.common.QueryParameter;
 import com.wind.web.common.QueryParameterMethod;
 import com.wind.web.common.QueryParameterType;
@@ -22,10 +21,7 @@ import com.wind.web.controller.rest.CarRest;
 import com.wind.web.controller.rest.CarFeeRest;
 import com.wind.web.controller.third.ParkThirdAPI;
 import com.wind.web.controller.wx.WxPayAPI;
-import com.wind.web.service.CarFeeService;
-import com.wind.web.service.CarService;
-import com.wind.web.service.FeeService;
-import com.wind.web.service.ParkService;
+import com.wind.web.service.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +55,8 @@ public class MyParkAPI {
     protected FeeService feeService;
     @Autowired
     private ParkService parkService;
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     protected CarRest carRest;
@@ -102,31 +100,61 @@ public class MyParkAPI {
         return carRest.search(parameters, EMPTY_STRING, Constant.ALL_PAGE);
     }
 
+    @ApiOperation(value = "预估停车费")
+    @GetMapping("/pay/price")
+    public ResponseEntity<?> pay(@ApiParam("停车记录") @RequestParam("carFee") Long carFeeId) throws Exception {
+        CarFee carFee = carFeeService.selectByID(carFeeId).get();
+        Park park = parkService.selectByID(carFee.getParkId()).get();
+        Fee fee = feeService.selectByID(park.getFeeId()).get();
+        BigDecimal money = ParkThirdAPI.calculateMoney(fee, carFee.getInTime(), new Date());
+        money = money.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN);
+        return ResponseEntity.status(HttpStatus.OK).body(money.toString());
+    }
+
+
     @ApiOperation(value = "支付停车费")
-    @PostMapping("/pay")
+    @PostMapping(value = "/pay")
     public ResponseEntity<?> pay(HttpServletRequest httpRequest,
                                  @ApiParam("停车记录") @RequestParam("carFee") Long carFeeId) throws Exception {
         CarFee carFee = carFeeService.selectByID(carFeeId).get();
+        if (carFee.getPaymentTime() != null) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Already Paid");
+        }
         Park park = parkService.selectByID(carFee.getParkId()).get();
         Fee fee = feeService.selectByID(park.getFeeId()).get();
         BigDecimal money = ParkThirdAPI.calculateMoney(fee, carFee.getInTime(), new Date());
         money = money.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN).add(BigDecimal.ONE);
         Dictionary<String, String> map = new Hashtable<>();
         if (money == BigDecimal.ZERO) {
+            carFee.setPaymentAmount(money);
+            carFee.setPaymentTime(new Date());
+            carFee.setPaymentMode("免费");
+            carFeeService.modifyById(carFee);
             map.put("money", "0");
         } else {
             OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
             WxPayUnifiedOrderRequest request = new WxPayUnifiedOrderRequest();
-            request.setOpenid(((SecurityUser) auth.getPrincipal()).getOpenId());
+            SecurityUser securityUser = (SecurityUser)(auth.getPrincipal());
+            request.setOpenid(securityUser.getOpenId());
             request.setDeviceInfo("ma");
             request.setBody(park.getName());
-            request.setDetail(park.getName() + "-停车费");
-            request.setOutTradeNo(Long.toString(new Date().getTime()) + '-' + new Random().nextInt(1000) + '-' + fee.getId().toString());
+            request.setDetail(carFee.getCarNumber() + "-停车费");
             request.setFeeType("CNY");
             request.setTotalFee(money.intValue());
             request.setSpbillCreateIp(httpRequest.getLocalAddr());
-            request.setNotifyUrl("https://app.lhzh.tech/wx/pay/parseOrderNotifyResult");
             request.setTradeType("JSAPI");
+            // save db
+            Payment payment = new Payment();
+            payment.setBody(request.getBody());
+            payment.setDetail(request.getDetail());
+            payment.setTotalFee(money.intValue());
+            payment.setFeeType(request.getFeeType());
+            payment.setTradeType(request.getTradeType());
+            payment.setIp(request.getSpbillCreateIp());
+            paymentService.add(payment);
+            // post wx request
+            request.setNotifyUrl(String.format("https://app.lhzh.tech/third/park/pay_callback/1/%d/%d/%d", payment.getId(), carFeeId, securityUser.getId()));
+            request.setOutTradeNo(String.format("1-%d-%d-%d-%d", securityUser.getId(), payment.getId(), carFeeId, new Random().nextInt(1000)));
             WxPayUnifiedOrderResult result = wxPayAPI.unifiedOrder(request);
             map.put("nonceStr", result.getNonceStr());
             String timeStamp = Long.toString(new Date().getTime() / 1000);
@@ -138,6 +166,7 @@ public class MyParkAPI {
                     wxPayProperties.getAppId(), result.getNonceStr(), pkg, timeStamp, wxPayProperties.getMchKey());
             String paySign = new BigInteger(1, MessageDigest.getInstance("MD5").digest(paySignString.getBytes())).toString(16);
             map.put("paySign", paySign);
+            map.put("money", money.toString());
         }
         return ResponseEntity.status(HttpStatus.OK).body(map);
     }
