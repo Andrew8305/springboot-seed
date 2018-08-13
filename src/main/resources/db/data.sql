@@ -36,11 +36,11 @@ INSERT INTO `park` (id, `name`, address, province, city, longitude, latitude, us
 INSERT INTO `park` (id, `name`, address, province, city, longitude, latitude, user_id, fee_id, `count`, remaining_count, is_member_only)
   VALUES (2, '停车场(西单大悦城东南)', '西单北大街131号西单大悦城F1层', '北京', '北京', 116.372988, 39.910236, 1, 2, 300, 150, 1);
 
-INSERT INTO `fee` (id, is_free, parameters, free_minutes, per_hour, limit_per_day)
-  VALUES (1, 0, 'per_hour|limit_per_day', 30, 2, 20);
+INSERT INTO `fee` (id, is_free, parameters, per_hour, limit_per_day)
+  VALUES (1, 0, 'per_hour,limit_per_day', 2, 20);
 
-INSERT INTO `fee` (id, is_free, parameters, free_minutes, per_hour, limit_per_day)
-  VALUES (2, 0, 'per_hour|limit_per_day', 15, 3, 40);
+INSERT INTO `fee` (id, is_free, parameters, per_hour, limit_per_day)
+  VALUES (2, 0, 'per_hour,limit_per_day', 3, 40);
 
 
 INSERT INTO `car_fee` (id, park_id, user_id, car_number)

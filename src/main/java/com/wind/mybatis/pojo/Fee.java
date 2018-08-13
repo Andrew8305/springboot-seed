@@ -12,8 +12,11 @@ public class Fee {
 
     private String parameters;
 
-    @Column(name = "free_minutes")
-    private Short freeMinutes;
+    @Column(name = "in_free_minutes")
+    private Short inFreeMinutes;
+
+    @Column(name = "out_free_minutes")
+    private Short outFreeMinutes;
 
     @Column(name = "per_time")
     private BigDecimal perTime;
@@ -24,14 +27,14 @@ public class Fee {
     @Column(name = "per_month")
     private BigDecimal perMonth;
 
+    @Column(name = "per_year")
+    private BigDecimal perYear;
+
     @Column(name = "limit_per_time")
     private BigDecimal limitPerTime;
 
     @Column(name = "limit_per_day")
     private BigDecimal limitPerDay;
-
-    @Column(name = "differential_duration")
-    private String differentialDuration;
 
     @Column(name = "differential_pricing")
     private String differentialPricing;
@@ -81,17 +84,31 @@ public class Fee {
     }
 
     /**
-     * @return free_minutes
+     * @return in_free_minutes
      */
-    public Short getFreeMinutes() {
-        return freeMinutes;
+    public Short getInFreeMinutes() {
+        return inFreeMinutes;
     }
 
     /**
-     * @param freeMinutes
+     * @param inFreeMinutes
      */
-    public void setFreeMinutes(Short freeMinutes) {
-        this.freeMinutes = freeMinutes;
+    public void setInFreeMinutes(Short inFreeMinutes) {
+        this.inFreeMinutes = inFreeMinutes;
+    }
+
+    /**
+     * @return out_free_minutes
+     */
+    public Short getOutFreeMinutes() {
+        return outFreeMinutes;
+    }
+
+    /**
+     * @param outFreeMinutes
+     */
+    public void setOutFreeMinutes(Short outFreeMinutes) {
+        this.outFreeMinutes = outFreeMinutes;
     }
 
     /**
@@ -137,6 +154,20 @@ public class Fee {
     }
 
     /**
+     * @return per_year
+     */
+    public BigDecimal getPerYear() {
+        return perYear;
+    }
+
+    /**
+     * @param perYear
+     */
+    public void setPerYear(BigDecimal perYear) {
+        this.perYear = perYear;
+    }
+
+    /**
      * @return limit_per_time
      */
     public BigDecimal getLimitPerTime() {
@@ -162,20 +193,6 @@ public class Fee {
      */
     public void setLimitPerDay(BigDecimal limitPerDay) {
         this.limitPerDay = limitPerDay;
-    }
-
-    /**
-     * @return differential_duration
-     */
-    public String getDifferentialDuration() {
-        return differentialDuration;
-    }
-
-    /**
-     * @param differentialDuration
-     */
-    public void setDifferentialDuration(String differentialDuration) {
-        this.differentialDuration = differentialDuration;
     }
 
     /**

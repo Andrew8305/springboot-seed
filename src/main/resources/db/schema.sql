@@ -103,6 +103,8 @@ CREATE TABLE `car_fee` (
   `out_image_url` varchar(200) DEFAULT '',
   `out_gate` varchar(100) DEFAULT '',
   `out_comment` varchar(100) DEFAULT '',
+  `cash` DECIMAL(6,2) DEFAULT 0,
+  `comment` varchar(100) DEFAULT '',
   PRIMARY KEY (`id`)
 );
 
@@ -135,6 +137,8 @@ CREATE TABLE `park_member` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `park_id` bigint(20) NOT NULL,
   `user_id` bigint(20) DEFAULT NULL,
+  `user_name` varchar(50) DEFAULT '',
+  `user_phone` varchar(50) DEFAULT '',
   `car_number` varchar(50) DEFAULT '',
   `start_date` DATETIME NOT NULL,
   `end_date` DATETIME NOT NULL,
@@ -142,7 +146,6 @@ CREATE TABLE `park_member` (
   `payment_mode` varchar(100) DEFAULT '',
   `payment_time` DATETIME DEFAULT NULL,
   `payment_id` bigint(20) DEFAULT NULL,
-  `operator` varchar(200) DEFAULT '',
   `comment` varchar(100) DEFAULT '',
   PRIMARY KEY (`id`)
 );
@@ -152,17 +155,18 @@ CREATE TABLE `park_member` (
 -- ----------------------------
 CREATE TABLE `fee` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `is_free` tinyint(1) NOT NULL DEFAULT 1,
-  `parameters` varchar(200) DEFAULT '',
-  `free_minutes` SMALLINT DEFAULT 20,
+  `is_free` tinyint(1) NOT NULL DEFAULT 0,
+  `parameters` varchar(200) DEFAULT 'per_hour',
+  `in_free_minutes` SMALLINT DEFAULT 20,
+  `out_free_minutes` SMALLINT DEFAULT 20,
   `per_time` DECIMAL(6,2) DEFAULT 0,
-  `per_hour` DECIMAL(6,2) DEFAULT 0,
+  `per_hour` DECIMAL(6,2) DEFAULT 1,
   `per_month` DECIMAL(6,2) DEFAULT 0,
+  `per_year` DECIMAL(6,2) DEFAULT 0,
   `limit_per_time` DECIMAL(6,2) DEFAULT 0,
   `limit_per_day` DECIMAL(6,2) DEFAULT 0,
-  `differential_duration` varchar(100) DEFAULT '',
   `differential_pricing` varchar(100) DEFAULT '',
-  `comment` varchar(100) DEFAULT '',
+  `comment` varchar(200) DEFAULT '',
   PRIMARY KEY (`id`)
 );
 

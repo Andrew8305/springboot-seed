@@ -15,6 +15,12 @@ public class ParkMember {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "user_phone")
+    private String userPhone;
+
     @Column(name = "car_number")
     private String carNumber;
 
@@ -35,8 +41,6 @@ public class ParkMember {
 
     @Column(name = "payment_id")
     private Long paymentId;
-
-    private String operator;
 
     private String comment;
 
@@ -80,6 +84,34 @@ public class ParkMember {
      */
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    /**
+     * @return user_name
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * @return user_phone
+     */
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    /**
+     * @param userPhone
+     */
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
     /**
@@ -178,20 +210,6 @@ public class ParkMember {
      */
     public void setPaymentId(Long paymentId) {
         this.paymentId = paymentId;
-    }
-
-    /**
-     * @return operator
-     */
-    public String getOperator() {
-        return operator;
-    }
-
-    /**
-     * @param operator
-     */
-    public void setOperator(String operator) {
-        this.operator = operator;
     }
 
     /**

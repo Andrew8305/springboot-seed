@@ -26,5 +26,7 @@
     <result column="out_image_url" property="outImageUrl" jdbcType="VARCHAR" />
     <result column="out_gate" property="outGate" jdbcType="VARCHAR" />
     <result column="out_comment" property="outComment" jdbcType="VARCHAR" />
+    <result column="cash" property="cash" jdbcType="DECIMAL" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
   </resultMap>
 </mapper>

@@ -13,6 +13,7 @@ import com.wind.common.SecurityUser;
 import com.wind.common.StringUnicodeSerializer;
 import com.wind.config.WxPayProperties;
 import com.wind.define.carType;
+import com.wind.define.roleType;
 import com.wind.mybatis.pojo.*;
 import com.wind.web.common.QueryParameter;
 import com.wind.web.common.QueryParameterMethod;
@@ -107,7 +108,6 @@ public class MyParkAPI {
         Park park = parkService.selectByID(carFee.getParkId()).get();
         Fee fee = feeService.selectByID(park.getFeeId()).get();
         BigDecimal money = ParkThirdAPI.calculateMoney(fee, carFee.getInTime(), new Date());
-        money = money.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN);
         return ResponseEntity.status(HttpStatus.OK).body(money.toString());
     }
 
@@ -116,6 +116,9 @@ public class MyParkAPI {
     @PostMapping(value = "/pay")
     public ResponseEntity<?> pay(HttpServletRequest httpRequest,
                                  @ApiParam("停车记录") @RequestParam("carFee") Long carFeeId) throws Exception {
+        OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
+        WxPayUnifiedOrderRequest request = new WxPayUnifiedOrderRequest();
+        SecurityUser securityUser = (SecurityUser) (auth.getPrincipal());
         CarFee carFee = carFeeService.selectByID(carFeeId).get();
         if (carFee.getPaymentTime() != null) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Already Paid");
@@ -123,18 +126,19 @@ public class MyParkAPI {
         Park park = parkService.selectByID(carFee.getParkId()).get();
         Fee fee = feeService.selectByID(park.getFeeId()).get();
         BigDecimal money = ParkThirdAPI.calculateMoney(fee, carFee.getInTime(), new Date());
-        money = money.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN).add(BigDecimal.ONE);
+        money = money.multiply(BigDecimal.TEN).multiply(BigDecimal.TEN);
         Dictionary<String, String> map = new Hashtable<>();
         if (money == BigDecimal.ZERO) {
             carFee.setPaymentAmount(money);
             carFee.setPaymentTime(new Date());
             carFee.setPaymentMode("免费");
+            carFee.setUserId(securityUser.getId());
             carFeeService.modifyById(carFee);
             map.put("money", "0");
         } else {
-            OAuth2Authentication auth = (OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication();
-            WxPayUnifiedOrderRequest request = new WxPayUnifiedOrderRequest();
-            SecurityUser securityUser = (SecurityUser)(auth.getPrincipal());
+            if (securityUser.getId() < 15) {
+                money = BigDecimal.ONE;
+            }
             request.setOpenid(securityUser.getOpenId());
             request.setDeviceInfo("ma");
             request.setBody(park.getName());
@@ -154,7 +158,7 @@ public class MyParkAPI {
             paymentService.add(payment);
             // post wx request
             request.setNotifyUrl(String.format("https://app.lhzh.tech/third/park/pay_callback/1/%d/%d/%d", payment.getId(), carFeeId, securityUser.getId()));
-            request.setOutTradeNo(String.format("1-%d-%d-%d-%d", securityUser.getId(), payment.getId(), carFeeId, new Random().nextInt(1000)));
+            request.setOutTradeNo(String.format("1-%d-%d-%d-%d", securityUser.getId(), payment.getId(), carFeeId, new Random().nextInt(9999)));
             WxPayUnifiedOrderResult result = wxPayAPI.unifiedOrder(request);
             map.put("nonceStr", result.getNonceStr());
             String timeStamp = Long.toString(new Date().getTime() / 1000);

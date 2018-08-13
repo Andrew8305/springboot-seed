@@ -68,6 +68,10 @@ public class CarFee {
     @Column(name = "out_comment")
     private String outComment;
 
+    private BigDecimal cash;
+
+    private String comment;
+
     /**
      * @return id
      */
@@ -360,5 +364,33 @@ public class CarFee {
      */
     public void setOutComment(String outComment) {
         this.outComment = outComment;
+    }
+
+    /**
+     * @return cash
+     */
+    public BigDecimal getCash() {
+        return cash;
+    }
+
+    /**
+     * @param cash
+     */
+    public void setCash(BigDecimal cash) {
+        this.cash = cash;
+    }
+
+    /**
+     * @return comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

@@ -52,24 +52,24 @@ public class ParkThirdAPI {
                                                     @RequestBody String xmlData) throws WxPayException {
         WxPayOrderNotifyResult result = wxPayAPI.parseOrderNotifyResult(xmlData);
         if (result.getReturnCode().equals("SUCCESS")) {
-        if (type == 1) {
-            Payment payment = paymentService.selectByID(id).get();
-            payment.setBankType(result.getBankType());
-            payment.setOutTradeNo(result.getOutTradeNo());
-            payment.setTransactionNo(result.getTransactionId());
-            payment.setComment(result.getReturnCode());
-            paymentService.modifyById(payment);
-            CarFee carFee = carFeeService.selectByID(rid).get();
-            carFee.setPaymentAmount(new BigDecimal(payment.getTotalFee()).divide(new BigDecimal(100)));
-            carFee.setPaymentTime(new Date());
-            carFee.setPaymentMode("微信支付");
-            carFee.setPaymentId(id);
-            carFee.setUserId(uid);
-            carFeeService.modifyById(carFee);
-        } else {
-            // todo: 会员充值
-        }
-        return ResponseEntity.status(HttpStatus.OK).body("SUCCESS");
+            if (type == 1) {
+                Payment payment = paymentService.selectByID(id).get();
+                payment.setBankType(result.getBankType());
+                payment.setOutTradeNo(result.getOutTradeNo());
+                payment.setTransactionNo(result.getTransactionId());
+                payment.setComment(result.getReturnCode());
+                paymentService.modifyById(payment);
+                CarFee carFee = carFeeService.selectByID(rid).get();
+                carFee.setPaymentAmount(new BigDecimal(payment.getTotalFee()).divide(new BigDecimal(100)));
+                carFee.setPaymentTime(new Date());
+                carFee.setPaymentMode("微信支付");
+                carFee.setPaymentId(id);
+                carFee.setUserId(uid);
+                carFeeService.modifyById(carFee);
+            } else {
+                // todo: 会员充值
+            }
+            return ResponseEntity.status(HttpStatus.OK).body("SUCCESS");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body("FAIL");
         }
@@ -97,17 +97,25 @@ public class ParkThirdAPI {
                         new QueryParameter("carNumber", QueryParameterMethod.EQUAL, carNumber, QueryParameterType.STRING));
                 if (memberList.size() > 0) {
                     ParkMember member = memberList.get(0);
-                    if (member.getPaymentAmount().intValue() == 0 && memberList.get(0).getEndDate().after(now)) {
-                        code = 1;
-                        message = "不收费车辆";
-                    } else {
+                    if (member.getEndDate().after(now)) {
                         Integer days = (int) ((member.getEndDate().getTime() - now.getTime()) / (1000 * 3600 * 24));
-                        code = 2;
-                        message = days.toString();
+                        if (days > 30) {
+                            code = 1;
+                            message = "会员车辆";
+                        } else {
+                            code = 2;
+                            message = days.toString();
+                        }
+                    } else if (optionalPark.get().getIsMemberOnly()) {
+                        message = "非会员车辆";
+                        code = 4;
+                    } else {
+                        message = "按次收费车辆";
+                        code = 3;
                     }
                 } else if (optionalPark.get().getIsMemberOnly()) {
                     code = 4;
-                    message = "非小区车辆";
+                    message = "非会员车辆";
                 } else {
                     code = 3;
                     message = "按次收费车辆";
@@ -167,7 +175,7 @@ public class ParkThirdAPI {
     }
 
     @ApiOperation(value = "车辆待出场申请")
-    @GetMapping(value ="/car_out_pre", produces = "text/plain;charset=UTF-8")
+    @GetMapping(value = "/car_out_pre", produces = "text/plain;charset=UTF-8")
     public ResponseEntity<?> carOutPre(
             @RequestParam("parkId") Long parkId,
             @RequestParam("car") String carNumber) {
@@ -181,101 +189,63 @@ public class ParkThirdAPI {
                     new QueryParameter("parkId", QueryParameterMethod.EQUAL, parkId.toString(), QueryParameterType.LONG),
                     new QueryParameter("carNumber", QueryParameterMethod.EQUAL, carNumber, QueryParameterType.STRING));
             if (feeList.size() > 0) {
-                CarFee fee = feeList.get(0);
-                long recId = fee.getId();
-                long inUTC = fee.getInTime().getTime() / 1000;
+                CarFee carFee = feeList.get(0);
+                long recId = carFee.getId();
+                long inUTC = carFee.getInTime().getTime() / 1000;
                 long outUTC = (new Date()).getTime() / 1000;
-                if (fee.getOutTime() != null) {
+                if (carFee.getOutTime() != null) {
                     code = -3;
                     message = "无入场记录";
                     return ResponseEntity.status(HttpStatus.OK).body(String.format("{ \"code\":%d ,\"msg\":\"%s\" }", code, message));
                 } else {
-                    if (fee.getCode() == 1) {
+                    if (carFee.getCode() == 1 || carFee.getCode() == 2) {
                         code = 1;
-                        fee.setOutComment("不收费小区车");
-                        carFeeService.modifyById(fee);
+                        carFee.setPaymentMode("会员");
+                        carFee.setOutComment("会员车辆");
+                        carFeeService.modifyById(carFee);
                         return ResponseEntity.status(HttpStatus.OK).body(String.format("{ \"code\":%d ,\"recId\":%d }", code, recId));
-                    } else if (fee.getCode() == 2) {  // 小区月租车
-                        List<ParkMember> memberList = parkMemberService.selectTop(1,
-                                new QueryParameter("parkId", QueryParameterMethod.EQUAL, parkId.toString(), QueryParameterType.LONG),
-                                new QueryParameter("carNumber", QueryParameterMethod.EQUAL, carNumber, QueryParameterType.STRING));
-                        if (memberList.size() > 0) {
-                            ParkMember member = memberList.get(0);
-                            Integer days = (int) ((member.getEndDate().getTime() - now.getTime()) / (1000 * 3600 * 24));
-                            if (fee.getPaymentTime() == null && member.getEndDate().before(now)) {
-                                code = 3;
-                                fee.setOutComment("会员过期收费");
-                                carFeeService.modifyById(fee);
-                                BigDecimal money = calculateMoney(parkFee, fee.getInTime(), new Date());
-                                long rentStartUTC = (new Date()).getTime() / (1000 * 3600 * 24);
-                                long rentEndUTC = rentStartUTC + 31;  // 按31天计算月租
-                                return ResponseEntity.status(HttpStatus.OK).body(
-                                        String.format("{\"code\":%d,\"recId\":%d\n" +
-                                                        "\"inTime\":%d,\n" +
-                                                        "\"oweDate\": %d\n" +
-                                                        "\"fee1\":{\"sTime\": %d,\n" +
-                                                        "\"eTime\": %d,\n" +
-                                                        "\"inCash\":%.2f}\n" +
-                                                        "\"fee2\": {\"sDate\":%d,\n" +
-                                                        "\"eDate\":%d,\n" +
-                                                        "\"inCash\":%.2f}\n" +
-                                                        "}", code, recId, inUTC,
-                                                days, inUTC, outUTC, money,
-                                                rentStartUTC, rentEndUTC,
-                                                parkFee.getPerMonth()));
-                            } else {
-                                code = 2;
-                                fee.setOutComment("会员没有过期或已经缴费");
-                                carFeeService.modifyById(fee);
-                                return ResponseEntity.status(HttpStatus.OK).body(
-                                        String.format("{ \"code\":%d, \"recId\":%d ,\"oweDate\":%d }", code, recId, days));
-                            }
-                        } else {
-                            message = "无会员记录";
-                            return ResponseEntity.status(HttpStatus.OK).body(String.format("{ \"code\":%d ,\"msg\":\"%s\" }", code, message));
-                        }
-                    } else if (fee.getCode() == 3 || fee.getCode() == 4) {
-                        BigDecimal money = calculateMoney(parkFee, fee.getInTime(), new Date());
-                        if (money.equals(BigDecimal.ZERO)) {
+                    } else if (carFee.getCode() == 3 || carFee.getCode() == 4) {
+                        BigDecimal money = calculateMoney(parkFee, carFee.getInTime(), new Date());
+                        if (money.compareTo(BigDecimal.ZERO) == 0) {
                             code = 1;
-                            fee.setOutComment("免费出场");
-                            carFeeService.modifyById(fee);
+                            carFee.setOutComment("免费期内出场");
+                            carFeeService.modifyById(carFee);
                             return ResponseEntity.status(HttpStatus.OK).body(String.format("{ \"code\":%d ,\"recId\":%d }", code, recId));
-                        } else if (fee.getPaymentTime() == null) {
+                        } else if (carFee.getPaymentTime() == null) {
                             code = 4;
-                            fee.setOutComment("未提前移动支付");
-                            carFeeService.modifyById(fee);
+                            carFee.setOutComment("未提前移动支付");
+                            carFeeService.modifyById(carFee);
                             return ResponseEntity.status(HttpStatus.OK).body(
                                     String.format("{\"code\":%d,\"recId\":%d\n" +
                                             "\"inTime\":%d,\n" +
                                             "\"fee1\":{\"sTime\":%d,\n" +
                                             "\"eTime\":%d,\n" +
-                                            "\"inCash\":%.2f}\n" +
-                                            "}", code, recId, inUTC, inUTC, outUTC, money));
-                        } else if ((fee.getPaymentTime().getTime() - now.getTime()) / (1000 * 60) < 15) {
+                                            "\"inCash\":%d}\n" +
+                                            "}", code, recId, inUTC, inUTC, outUTC, money.multiply(new BigDecimal(100)).intValue()));
+                        } else if ((carFee.getPaymentTime().getTime() - now.getTime()) / (1000 * 60) < parkFee.getOutFreeMinutes()) {
                             code = 1;
-                            fee.setOutComment("已经提前移动支付，15分钟内出场");
-                            carFeeService.modifyById(fee);
+                            carFee.setOutComment("已移动支付");
+                            carFeeService.modifyById(carFee);
                             return ResponseEntity.status(HttpStatus.OK).body(String.format("{ \"code\":%d ,\"recId\":%d }", code, recId));
                         } else { // 已经提前移动支付，超时出场
-                            BigDecimal payedMoney = fee.getPaymentAmount();
+                            BigDecimal payedMoney = carFee.getPaymentAmount();
                             if (money.compareTo(payedMoney) == 0) {
                                 code = 1;
-                                fee.setOutComment("已经提前移动支付，超时出场，但已支付金额能够弥补超时费用");
-                                carFeeService.modifyById(fee);
+                                carFee.setOutComment("已移动支付，超时出场，无需补缴");
+                                carFeeService.modifyById(carFee);
                                 return ResponseEntity.status(HttpStatus.OK).body(String.format("{ \"code\":%d ,\"recId\":%d }", code, recId));
                             } else {
                                 code = 4;
-                                fee.setOutComment("已经提前移动支付，超时出场，重新计算计费起始时间");
-                                carFeeService.modifyById(fee);
+                                carFee.setOutComment("已移动支付，超时出场，需补缴");
+                                carFeeService.modifyById(carFee);
                                 return ResponseEntity.status(HttpStatus.OK).body(
                                         String.format("{\"code\":%d,\"recId\":%d\n" +
                                                         "\"inTime\":%d,\n" +
                                                         "\"fee1\":{\"sTime\":%d,\n" +
                                                         "\"eTime\":%d,\n" +
-                                                        "\"inCash\":%.2f}\n" +
-                                                        "}", code, recId, inUTC, fee.getPaymentTime().getTime() / 1000,
-                                                outUTC, payedMoney.subtract(money)));
+                                                        "\"inCash\":%d}\n" +
+                                                        "}", code, recId, inUTC, carFee.getPaymentTime().getTime() / 1000,
+                                                outUTC, (money.subtract(payedMoney)).multiply(new BigDecimal(100)).intValue()));
                             }
                         }
                     } else {
@@ -325,25 +295,15 @@ public class ParkThirdAPI {
                 fee.setOutOperator(optUser);
                 fee.setOutImageUrl(imgUrl);
                 fee.setOutGate(gate);
-                fee.setPaymentTime(new Date());
                 if (inCash > 0) {
-                    if (feeType == 1) { // 续租收现
-                        ParkMember member = new ParkMember();
-                        member.setCarNumber(carNumber);
-                        member.setParkId(parkId);
-                        member.setOperator(optUser);
-                        member.setComment("停车场手动续租");
-                        member.setStartDate(new Date(sTime * 1000 * 24 * 3600));
-                        member.setEndDate(new Date(eTime * 1000 * 24 * 3600));
-                        member.setPaymentAmount(new BigDecimal(inCash).divide(new BigDecimal(100)));
-                        member.setPaymentTime(new Date());
-                        member.setPaymentMode("cash");
-                        parkMemberService.add(member);
-                        fee.setPaymentAmount(BigDecimal.ZERO);
-                        fee.setPaymentMode("续租");
-                    } else {
+                    if (fee.getPaymentTime() == null) {
                         fee.setPaymentAmount(new BigDecimal(inCash).divide(new BigDecimal(100)));
+                        fee.setPaymentTime(new Date());
+                        fee.setCash(fee.getPaymentAmount());
                         fee.setPaymentMode("现金");
+                    } else {
+                        fee.setCash(new BigDecimal(inCash).divide(new BigDecimal(100)));
+                        fee.setComment("超时补缴");
                     }
                 }
                 carFeeService.modifyById(fee);
@@ -373,28 +333,43 @@ public class ParkThirdAPI {
         BigDecimal money = BigDecimal.ZERO;
         if (fee.getIsFree()) {
             // zero
-        } else if ((endTime.getTime() - startTime.getTime()) / (1000 * 60) < fee.getFreeMinutes()) {
+        } else if ((endTime.getTime() - startTime.getTime()) / (1000 * 60) < fee.getInFreeMinutes()) {
             // zero
         } else {
-            ArrayList<String> parameters = new ArrayList<>(Arrays.asList(fee.getParameters().split("\\|")));
-            long hours = (endTime.getTime() - startTime.getTime()) / (1000 * 3600) + 1;
-            if (parameters.contains("per_hour")) {
-                money = new BigDecimal(hours).multiply(fee.getPerHour());
-            } else if (parameters.contains("per_time")) {
-                money = fee.getPerTime();
-            } else if (parameters.contains("differential_pricing")) {
-                // TODO: differential_pricing
-            }
-            if (parameters.contains("limit_per_time") && fee.getLimitPerTime().compareTo(money) == -1) {
-                money = fee.getLimitPerTime();
-            } else if (parameters.contains("limit_per_day")) {
-                long days = hours / 24;
-                long residualHours = hours - days * 24;
-                BigDecimal residualMoney = new BigDecimal(residualHours).multiply(fee.getPerHour());
+            ArrayList<String> parameters = new ArrayList<>(Arrays.asList(fee.getParameters().split(",")));
+            int hours = (int) ((endTime.getTime() - startTime.getTime()) / (1000 * 3600) + 1);
+            money = getPricing(fee, parameters, hours);
+            if (parameters.contains("limit_per_day")) {
+                int days = hours / 24;
+                int residualHours = hours - days * 24;
+                BigDecimal residualMoney = getPricing(fee, parameters, residualHours);
                 if (fee.getLimitPerDay().compareTo(residualMoney) == -1) {
                     residualMoney = fee.getLimitPerDay();
                 }
-                money = (new BigDecimal(days).multiply(fee.getLimitPerDay())).add(residualMoney);
+                BigDecimal daysMoney = new BigDecimal(days).multiply(fee.getLimitPerDay());
+                money = daysMoney.add(residualMoney);
+            }
+            if (parameters.contains("limit_per_time") && fee.getLimitPerTime().compareTo(money) == -1) {
+                money = fee.getLimitPerTime();
+            }
+        }
+        return money;
+    }
+
+    static private BigDecimal getPricing(Fee fee, ArrayList<String> parameters, int hours) {
+        BigDecimal money = BigDecimal.ZERO;
+        if (parameters.contains("per_hour")) {
+            money = new BigDecimal(hours).multiply(fee.getPerHour());
+        } else if (parameters.contains("per_time")) {
+            money = fee.getPerTime();
+        } else if (parameters.contains("differential_pricing")) {
+            ArrayList<String> prices = new ArrayList<>(Arrays.asList(fee.getDifferentialPricing().split(",")));
+            if (prices.size() != 24) {
+                log.error(String.format("分区计费错误，规则必须等于24小时：%d", fee.getId()));
+            } else {
+                hours = hours > 24 ? 24 : hours;
+                int value = Integer.parseInt(prices.get(hours - 1));
+                money = BigDecimal.valueOf(value);
             }
         }
         return money;

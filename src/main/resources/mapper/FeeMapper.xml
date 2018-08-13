@@ -8,13 +8,14 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="is_free" property="isFree" jdbcType="BIT" />
     <result column="parameters" property="parameters" jdbcType="VARCHAR" />
-    <result column="free_minutes" property="freeMinutes" jdbcType="SMALLINT" />
+    <result column="in_free_minutes" property="inFreeMinutes" jdbcType="SMALLINT" />
+    <result column="out_free_minutes" property="outFreeMinutes" jdbcType="SMALLINT" />
     <result column="per_time" property="perTime" jdbcType="DECIMAL" />
     <result column="per_hour" property="perHour" jdbcType="DECIMAL" />
     <result column="per_month" property="perMonth" jdbcType="DECIMAL" />
+    <result column="per_year" property="perYear" jdbcType="DECIMAL" />
     <result column="limit_per_time" property="limitPerTime" jdbcType="DECIMAL" />
     <result column="limit_per_day" property="limitPerDay" jdbcType="DECIMAL" />
-    <result column="differential_duration" property="differentialDuration" jdbcType="VARCHAR" />
     <result column="differential_pricing" property="differentialPricing" jdbcType="VARCHAR" />
     <result column="comment" property="comment" jdbcType="VARCHAR" />
   </resultMap>
