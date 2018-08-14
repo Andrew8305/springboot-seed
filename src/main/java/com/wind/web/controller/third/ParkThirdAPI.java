@@ -222,7 +222,7 @@ public class ParkThirdAPI {
                                             "\"eTime\":%d,\n" +
                                             "\"inCash\":%d}\n" +
                                             "}", code, recId, inUTC, inUTC, outUTC, money.multiply(new BigDecimal(100)).intValue()));
-                        } else if ((carFee.getPaymentTime().getTime() - now.getTime()) / (1000 * 60) < parkFee.getOutFreeMinutes()) {
+                        } else if ((now.getTime() - carFee.getPaymentTime().getTime()) / (1000 * 60) < parkFee.getOutFreeMinutes()) {
                             code = 1;
                             carFee.setOutComment("已移动支付");
                             carFeeService.modifyById(carFee);
